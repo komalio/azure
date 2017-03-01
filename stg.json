@@ -20,9 +20,13 @@
            "defaultValue": "westus",
            "type": "String"
        }
+      
+       "storageAccountName": {
+      "type":"String"
+   }
    },
    "variables": {
-       "storageAccountName": "redvmstorage"
+       
    },
    "resources": [
        {
