@@ -21,4 +21,5 @@
                 "publicIpAllocationMethod": "[parameters('publicIpAddressType')]"
             }
         }
+      ]
 }
