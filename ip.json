@@ -11,11 +11,9 @@
         "publicIpAddressType": {
             "type": "string"
         },
-        "publicIPdnsPrefix":
-        {
+        "publicIPdnsPrefix": {
             "type": "string"
         }
-
     },
     "variables": {},
     "resources": [
@@ -25,8 +23,17 @@
             "apiVersion": "2016-09-01",
             "location": "[parameters('location')]",
             "properties": {
-                "publicIPAllocationMethod": "[parameters('publicIpAddressType')]"
+                "publicIPAllocationMethod": "[parameters('publicIpAddressType')]",
+                "dnsSettings": {
+                    "domainNameLabel": "[parameters('publicIPdnsPrefix')]"
+                }
             }
         }
-    ]
+    ],
+    "outputs": {
+        "fqdn": {
+            "type": "string",
+            "value": "[reference(parameters('publicIPAddressName')).dnsSettings.fqdn]"
+        }
+    }
 }
