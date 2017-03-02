@@ -20,7 +20,7 @@
     "variables": {},
     "resources": [
         {
-            "name": "[parameters('publicIpAddressName')]",
+            "name": "[parameters('publicIPAddressName')]",
             "type": "Microsoft.Network/publicIPAddresses",
             "apiVersion": "2016-09-01",
             "location": "[parameters('location')]",
