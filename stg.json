@@ -19,10 +19,13 @@
         "location": {
             "defaultValue": "westus",
             "type": "String"
+        },
+        "storageAccountName":{
+            "type":"string"
         }
     },
     "variables": {
-        "storageAccountName": "redvmstorage"
+        
     },
     "resources": [
         {
