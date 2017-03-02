@@ -1,7 +1,10 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-  "contentVersion": "1.0.0.0",
-  "parameters": {
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string"
+        },
         "publicIpAddressName": {
             "type": "string"
         },
@@ -9,17 +12,16 @@
             "type": "string"
         }
     },
-  "variables": {},
+    "variables": {},
     "resources": [
-    
-            {
+        {
             "name": "[parameters('publicIpAddressName')]",
-            "type": "Microsoft.Network/publicIpAddresses",
+            "type": "Microsoft.Network/publicIPAddresses",
             "apiVersion": "2016-09-01",
             "location": "[parameters('location')]",
             "properties": {
-                "publicIpAllocationMethod": "[parameters('publicIpAddressType')]"
+                "publicIPAllocationMethod": "[parameters('publicIpAddressType')]"
             }
         }
-      ]
+    ]
 }
