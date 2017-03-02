@@ -29,7 +29,7 @@
             "location": "[parameters('location')]",
             "properties": {
                 "addressSpace": {
-                    "addressPrefixes": [
+                    "addressPrefix": [
                         "[parameters('addressPrefix')]"
                     ]
                 },
