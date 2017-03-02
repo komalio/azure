@@ -5,12 +5,17 @@
         "location": {
             "type": "string"
         },
-        "publicIpAddressName": {
+        "publicIPAddressName": {
             "type": "string"
         },
         "publicIpAddressType": {
             "type": "string"
+        },
+        "publicIPdnsPrefix":
+        {
+            "type": "string"
         }
+
     },
     "variables": {},
     "resources": [
