@@ -74,16 +74,6 @@
             "sku": "[parameters('windowsOSVersion')]",
             "version": "latest"
           },
-         "dataDisks": [
-                       {
-                           "name": "[concat(parameters('vmName'),'-dataDisk')]",
-                           "lun": 0,
-                           "vhd": {
-                               "uri": "[concat('http://',parameters('storageAccountName'),'.blob.core.windows.net/',variables('vmStorageAccountContainerName'),'/',parameters('vmName'),uniquestring(resourceGroup().id),'-datadisk.vhd')]"
-                           },
-                           "createOption": "FromImage"
-                       }
-                   ],
                    "osDisk": {
                        "name": "[concat(parameters('vmName'),'-osDisk')]",
                        "vhd": {
