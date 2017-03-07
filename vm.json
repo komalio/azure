@@ -50,7 +50,7 @@
     }
   },
    "variables": {
-       "vmStorageAccountContainerName":"storagecontainer"
+       "vmStorageAccountContainerName":"vhds"
    },
    "resources": [
        {
