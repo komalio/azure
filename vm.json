@@ -49,6 +49,7 @@
     }
   },
    "variables": {
+       "vmStorageAccountContainerName":"storagecontainer"
    },
    "resources": [
        {
@@ -56,10 +57,6 @@
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[parameters('vmname')]",
       "location": "[resourceGroup().location]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]",
-        "[resourceId('Microsoft.Network/networkInterfaces/', parameters('nicName'))]"
-      ],
       "properties": {
         "hardwareProfile": {
           "vmSize": "Standard_A2"
@@ -76,16 +73,25 @@
             "sku": "[parameters('windowsOSVersion')]",
             "version": "latest"
           },
-          "osDisk": {
-            "createOption": "FromImage"
-          },
-          "dataDisks": [
-            {
-              "diskSizeGB": "1023",
-              "lun": 0,
-              "createOption": "Empty"
-            }
-          ]
+         "dataDisks": [
+                       {
+                           "name": "[concat(parameters('vmName'),'-dataDisk')]",
+                           "lun": 0,
+                           "vhd": {
+                               "uri": "[concat('http://',parameters('storageAccountName'),'.blob.core.windows.net/',variables('vmStorageAccountContainerName'),'/',parameters('vmName'),uniquestring(resourceGroup().id),'-datadisk.vhd')]"
+                           },
+                           "createOption": "FromImage"
+                       }
+                   ],
+                   "osDisk": {
+                       "name": "[concat(parameters('vmName'),'-osDisk')]",
+                       "vhd": {
+                           "uri": "[concat('https://',parameters('storageAccountName'),'.blob.core.windows.net/',variables('vmStorageAccountContainerName'),'/',parameters('vmName'),uniquestring(resourceGroup().id),'-osdisk.vhd')]"
+                       },
+                       "caching": "ReadWrite",
+                       "createOption": "FromImage"
+                   }
+               }
         },
         "networkProfile": {
           "networkInterfaces": [
@@ -93,15 +99,8 @@
               "id": "[resourceId('Microsoft.Network/networkInterfaces',parameters('nicName'))]"
             }
           ]
-        },
-        "diagnosticsProfile": {
-          "bootDiagnostics": {
-            "enabled": "true",
-            "storageUri": "[reference(resourceId('Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))).primaryEndpoints.blob]"
-          }
         }
       }
-    }
+    
   ]
 }
-
