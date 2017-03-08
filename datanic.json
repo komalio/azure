@@ -60,7 +60,8 @@
             "location": "[parameters('location')]",
             "tags": {
                 "[parameters('tag').key1]": "[parameters('tag').value1]"
-            },
+            },    
+            "properties": {
            
                 "ipConfigurations": [
                     {
@@ -77,6 +78,7 @@
                     }
                 ]
             }
-        
+        }
     ]
 }
+
