@@ -35,7 +35,7 @@
       "apiVersion": "2016-12-01",
             "location": "[parameters('location')]",
             "properties": {
-                "accountType": "[parameters('storageAccountType')]"
+                "storageAccountType": "[parameters('storageAccountType')]"
             }
         }
     ]
