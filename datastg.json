@@ -2,3 +2,41 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+         "storageAccountType": {
+            "defaultValue": "Standard_LRS",
+            "allowedValues": [
+                "Standard_LRS",
+                "Standard_ZRS",
+                "Standard_GRS",
+                "Standard_RAGRS",
+                "Premium_LRS"
+            ],
+            "type": "String",
+            "metadata": {
+                "description": "Stoarge Account Type"
+            }
+        },
+        "location": {
+            "defaultValue": "westus",
+            "type": "String"
+        },
+        "newstorageAccountName":{
+            "type":"string"
+        }
+    }, 
+
+    "variables": {
+        
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+                 "name": "[parameters('newstorageAccountName')]",
+       "apiVersion": "2015-06-15",
+            "location": "[parameters('location')]",
+            "properties": {
+                "accountType": "[parameters('storageAccountType')]"
+            }
+        }
+    ]
+}
