@@ -13,6 +13,9 @@
         },
         "uniqueNamePrefix": {
             "type": "string"
+        },
+        "apiVersion":{
+            "type": "string"
         }
     },
     "variables": {},
@@ -20,7 +23,7 @@
         {
             "name": "[parameters('publicIPAddressName')]",
             "type": "Microsoft.Network/publicIPAddresses",
-"apiVersion": "2015-06-15",
+"apiVersion": "[parameters('apiVersion')]",
             "location": "[parameters('location')]",
             "properties": {
                 "publicIPAllocationMethod": "[parameters('publicIpAddressType')]",
