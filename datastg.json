@@ -22,7 +22,9 @@
         },
         "newstorageAccountName":{
             "type":"string"
-        }
+        }, "apiVersion":{
+        "type": "string"
+    }
     }, 
 
     "variables": {
@@ -32,7 +34,7 @@
         {
             "type": "Microsoft.Storage/storageAccounts",
                  "name": "[parameters('newstorageAccountName')]",
-       "apiVersion": "2015-06-15",
+      "apiVersion": "[parameters('apiVersion')]",
             "location": "[parameters('location')]",
             "properties": {
                 "accountType": "[parameters('storageAccountType')]"
