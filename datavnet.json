@@ -16,17 +16,13 @@
         },
         "location": {
             "type": "string"
-        },
-        "apiVersion":{
-            "type": "string"
-        }
-    },
+        }      },
     "variables": {},
     "resources": [
         {
             "name": "[parameters('virtualNetworkName')]",
             "type": "Microsoft.Network/virtualNetworks",
-"apiVersion":"[parameters('apiVersion')]",
+"apiVersion":"2015-06-15",
             "location": "[parameters('location')]",
             "properties": {
                 "addressSpace": {
