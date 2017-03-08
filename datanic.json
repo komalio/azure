@@ -11,7 +11,7 @@
         },
         "networkApiVersion": {
             "type": "string",
-            "defaultValue": "2015-06-15",
+            "defaultValue": "2016-09-01",
            
             "metadata": {
                 "description": "API Version for the Network Resources"
