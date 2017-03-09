@@ -53,11 +53,11 @@
     
    "variables": {
        "vmStorageAccountContainerName":"vhds",
-       "apiVersion":"2016-04-30-preview"
+       "apiVersion":"2015-06-15"
    },
    "resources": [
        {
-      "apiVersion": "2016-04-30-preview",
+      "apiVersion": "2015-06-15",
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[parameters('vmname')]",
     "location": "[resourceGroup().location]",
