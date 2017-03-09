@@ -74,7 +74,10 @@
             }
         },
         "customScriptsUrl": {
-            "type": "string",
+            "type": "array",
+             "defaultValue": [
+                "http://abc.xyz.com"
+             ],
             "metadata": {
                 "description": "Custom Script URL"
             }
