@@ -93,7 +93,7 @@
             "comments": "Extension",
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "name": "[concat(parameters('vmName'),'/', parameters('vmExtensionName'))]",
-            "apiVersion": "2015-06-15",
+            "apiVersion": "2015-01-01",
             "location": "[parameters('location')]",
             "tags": {
                 "[parameters('tag').key1]": "[parameters('tag').value1]"
