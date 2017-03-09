@@ -1,0 +1,127 @@
+{
+   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+   "contentVersion": "1.0.0.0",
+   "parameters": {
+       "location": {
+           "type": "string",
+           "defaultValue": "westus",
+           "allowedValues": [
+               "Brazil South",
+               "brazilsouth",
+               "East Asia",
+               "eastasia",
+               "East US",
+               "eastus",
+               "Japan East",
+               "japaneast",
+               "Japan West",
+               "japanwest",
+               "North Central US",
+               "northcentralus",
+               "North Europe",
+               "northeurope",
+               "South Central US",
+               "southcentralus",
+               "West Europe",
+               "westeurope",
+               "West US",
+               "westus",
+               "Southeast Asia",
+               "southeastasia",
+               "Central US",
+               "centralus",
+               "East US 2",
+               "eastus2"
+           ],
+           "metadata": {
+               "description": "Deployment Location Hint: Use lowercase for creating ipaddress"
+           }
+       },
+       "computeApiVersion": {
+           "type": "string",
+           "defaultValue": "2015-06-15",
+           "allowedValues": [
+               "2015-05-01-preview",
+               "2015-06-15"
+           ],
+           "metadata": {
+               "description": "API Version for the Compute Resources"
+           }
+       },
+       "tag": {
+           "type": "object",
+           "defaultValue": {
+               "key1": "key",
+               "value1": "value"
+           },
+           "metadata": {
+               "description": "Tag Values"
+           }
+       },
+       "vmName": {
+           "type": "string",
+           "defaultValue": "vmName",
+           "metadata": {
+               "description": "Virtual Machine Name"
+           }
+       },
+       "vmExtensionName": {
+           "type": "string",
+           "defaultValue": "vmExtensionName",
+           "metadata": {
+               "description": "Virtual Machine Extension Name"
+           }
+       },
+       "typeHandlerVersion": {
+           "type": "string",
+           "defaultValue": "2.0",
+           "allowedValues": [
+               "1.4",
+               "1.5",
+               "2.0"
+           ],
+           "metadata": {
+               "description": "Virtual Machine Extension Name"
+           }
+       },
+       "customScriptsUrl": {
+           "type": "array",
+           "defaultValue": [
+               "http://abc.xyz.com",
+               "http://github.com"
+           ],
+           "metadata": {
+               "description": "Custom Script URL"
+           }
+       },
+       "commandToExecute": {
+           "type": "string",
+           "defaultValue": "commandToExecute",
+           "metadata": {
+               "description": "Command to Execute on the Script"
+           }
+       }
+   },
+   "variables": {},
+   "resources": [
+       {
+           "comments": "Extension",
+           "type": "Microsoft.Compute/virtualMachines/extensions",
+           "name": "[concat(parameters('vmName'),'/', parameters('vmExtensionName'))]",
+           "apiVersion": "[parameters('computeApiVersion')]",
+           "location": "[parameters('location')]",
+           "tags": {
+               "[parameters('tag').key1]": "[parameters('tag').value1]"
+           },
+           "properties": {
+               "publisher": "Microsoft.OSTCExtensions",
+               "type": "CustomScriptForLinux",
+               "typeHandlerVersion": "[parameters('typeHandlerVersion')]",
+               "settings": {
+                   "fileUris": "[parameters('customScriptsUrl')]",
+                   "commandToExecute": "[parameters('commandToExecute')]"
+               }
+           }
+       }
+   ]
+}
