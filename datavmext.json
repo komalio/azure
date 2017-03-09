@@ -74,13 +74,7 @@
             }
         },
         "customScriptsUrl": {
-            "type": "array",
-             "defaultValue": [
-                "http://abc.xyz.com"
-             ],
-            "metadata": {
-                "description": "Custom Script URL"
-            }
+            "type": "string"
         },
         "commandToExecute": {
             "type": "string",
@@ -107,7 +101,7 @@
                 "typeHandlerVersion": "2.0",
                 "autoUpgradeMinorVersion": true,
                 "settings": {
-                    "fileUris": ["[parameters('customScriptsUrl')]"],
+                    "fileUris": "[parameters('customScriptsUrl')]",
                     "commandToExecute": "[parameters('commandToExecute')]"
                 }
             }
