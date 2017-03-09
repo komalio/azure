@@ -1,67 +1,63 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-  "contentVersion": "1.0.0.0",
-  "parameters": {
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
         "location": {
             "type": "string"
         },
-      "vmname":{
-          "type": "string"
-      },
-      "vmSize":{
-          "type": "string"
-      },
-    "newstorageAccountName":
-    {
-        "type": "string"
+        "vmname": {
+            "type": "string"
+        },
+        "vmSize": {
+            "type": "string"
+        },
+        "newstorageAccountName": {
+            "type": "string"
+        },
+        "nicName": {
+            "type": "string"
+        },
+        "adminUsername": {
+            "type": "string",
+            "metadata": {
+                "description": "Username for the Virtual Machine."
+            }
+        },
+        "adminPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Password for the Virtual Machine."
+            }
+        },
+        "imagePublisher": {
+            "type": "string"
+        },
+        "dnsLabelPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Unique DNS Name for the Public IP used to access the Virtual Machine."
+            }
+        },
+        "rhelOSVersion": {
+            "type": "string"
+        },
+        "imageOffer": {
+            "type": "string"
+        },
+        "OSDiskName": {
+            "type": "string"
+        }
     },
-    "nicName":{
-        "type": "string"
+    "variables": {
+        "vmStorageAccountContainerName": "vhds",
+        "apiVersion": "2015-06-15"
     },
-    "adminUsername": {
-      "type": "string",
-      "metadata": {
-        "description": "Username for the Virtual Machine."
-      }
-    },
-    "adminPassword": {
-      "type": "securestring",
-      "metadata": {
-        "description": "Password for the Virtual Machine."
-      }
-    },
-     "imagePublisher":{
-         "type": "string"
-     },
-    "uniqueNamePrefix": {
-      "type": "string",
-      "metadata": {
-        "description": "Unique DNS Name for the Public IP used to access the Virtual Machine."
-      }
-    },
-    "rhelOSVersion": {
-      "type": "string"
-      
-    },
-    "imageOffer":{
-"type": "string"
-    },
-    "OSDiskName":{
-        "type": "string"
-    }
-  },
-    
-   "variables": {
-       "vmStorageAccountContainerName":"vhds",
-       "apiVersion":"2015-06-15"
-   },
-   "resources": [
-       {
-      "apiVersion": "2015-06-15",
-      "type": "Microsoft.Compute/virtualMachines",
-      "name": "[parameters('vmname')]",
-    "location": "[resourceGroup().location]",
-        
+    "resources": [
+        {
+            "apiVersion": "2015-06-15",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[parameters('vmname')]",
+            "location": "[parameters('location')]",
             "properties": {
                 "hardwareProfile": {
                     "vmSize": "[parameters('vmSize')]"
@@ -96,6 +92,5 @@
                 }
             }
         }
-      
-  ]
+    ]
 }

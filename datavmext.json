@@ -101,7 +101,9 @@
                 "typeHandlerVersion": "2.0",
                 "autoUpgradeMinorVersion": true,
                 "settings": {
-                    "fileUris": "[parameters('customScriptsUrl')]",
+                    "fileUris": [
+                        "[parameters('customScriptsUrl')]"
+                    ],
                     "commandToExecute": "[parameters('commandToExecute')]"
                 }
             }
