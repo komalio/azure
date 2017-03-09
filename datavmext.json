@@ -74,11 +74,7 @@
             }
         },
         "customScriptsUrl": {
-            "type": "array",
-            "defaultValue": [
-                "http://abc.xyz.com",
-                "http://github.com"
-            ],
+            "type": "string",
             "metadata": {
                 "description": "Custom Script URL"
             }
