@@ -74,7 +74,7 @@
             }
         },
         "customScriptsUrl": {
-            "type": "Array",
+            "type": "string",
             "metadata": {
                 "description": "Custom Script URL"
             }
