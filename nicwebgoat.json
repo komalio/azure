@@ -10,21 +10,21 @@
         "nicName": {
             "type": "string"
             },
-       
-      
+        
         "publicIpName": {
             "type": "string"
             },
-        
+        "subnetRef": {
+            "type": "string"       
+        },
         "nsgName":
     {
         "type": "string"
     },
-    "vnetName":
-    {
-        "type": "string"
-    }
-
+     "subnetRef": {
+            "type": "string"
+     }
+    
     },
     "variables": {},
     "resources": [
@@ -44,7 +44,7 @@
                                 "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIpName'))]"
                             },
                             "subnet": {
-                                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('vnetname')), '/subnets/default')]"
+                                "id": "[parameters('subnetRef')]"
                             }
                         }
                     }
