@@ -5,21 +5,8 @@
         "location": {
             "type": "string"
               },
-        "tag": {
-            "type": "object",
-            "defaultValue": {
-                "key1": "key",
-                "value1": "value"
-            },
-          
-        "vmName": {
-            "type": "string"
-           
-            }
-        },
-        "vmExtensionName": {
-            "type": "string"
-        },
+     
+   
         "typeHandlerVersion": {
             "type": "string",
             "defaultValue": "2.0",
@@ -41,7 +28,7 @@
             "metadata": {
                 "description": "Command to Execute on the Script"
             }
-        }
+        
     },
     "variables": {},
     "resources": [
@@ -58,7 +45,7 @@
                 "autoUpgradeMinorVersion": true,
                 "settings": {
                     "fileUris": [
-                        "https://raw.githubusercontent.com/pradeepts/testRepo/master/docker-install.sh"
+                         "[parameters('customScriptsUrl')]"
                     ]
                 },
                 "protectedSettings": {
@@ -67,5 +54,4 @@
             }
         }
     ]
-
 }
