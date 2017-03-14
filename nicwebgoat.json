@@ -24,9 +24,7 @@
         "publicIpName": {
             "type": "string"
             },
-        "subnetRef": {
-            "type": "string"       
-        },
+        
         "nsgName":
     {
         "type": "string"
