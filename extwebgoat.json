@@ -42,6 +42,7 @@
                 "description": "Command to Execute on the Script"
             }
         
+    }
     },
     "variables": {},
     "resources": [
