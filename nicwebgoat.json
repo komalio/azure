@@ -10,16 +10,7 @@
         "nicName": {
             "type": "string"
             },
-        "tag": {
-            "type": "object",
-            "defaultValue": {
-                "key1": "key",
-                "value1": "value"
-            },
-            "metadata": {
-                "description": "Tag Values"
-            }
-        },
+       
       
         "publicIpName": {
             "type": "string"
