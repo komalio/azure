@@ -18,6 +18,20 @@
                 "description": "Virtual Machine Extension Name"
             }
         },
+           "vmName": {
+            "type": "string",
+            "defaultValue": "vmName",
+            "metadata": {
+                "description": "Virtual Machine Name"
+            }
+        },
+        "vmExtensionName": {
+            "type": "string",
+            "defaultValue": "vmExtensionName",
+            "metadata": {
+                "description": "Virtual Machine Extension Name"
+            }
+        },
         "customScriptsUrl": {
             "type": "string"
         },
@@ -34,7 +48,7 @@
         {
             "comments": "Extension",
             "type": "Microsoft.Compute/virtualMachines/extensions",
-           "name": "webgoat-vm/CustomScriptForLinux",
+           "name": "[concat(parameters('vmName'),'/', parameters('vmExtensionName'))]",
             "apiVersion": "2016-03-30",
             "location": "westus",
             "properties": {
