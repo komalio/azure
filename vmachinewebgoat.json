@@ -8,7 +8,9 @@
         "location": {
             "type": "String"
         },
-       
+       "adminUsername":{
+           "type": "string"
+       },
         "adminPassword": {
             "type": "string"
         },
@@ -65,7 +67,7 @@
                 },
                 "osProfile": {
                     "computerName": "[parameters('vmName')]",
-                    "adminUsername": "tspadmin",
+                     "adminUsername": "[parameters('adminUsername')]",
                     "linuxConfiguration": {
                         "disablePasswordAuthentication": false
                     },
