@@ -1,0 +1,47 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+            "location": {
+            "type": "string"
+        },
+            "storageAccName":{
+            "defaultValue": "wgstrg",
+            "type": "string"
+        },
+         "storageAccType":{
+            "type": "string",
+            "defaultValue": "Premium_LRS"
+        },
+          "tag": {
+            "type": "object",
+            "defaultValue": {
+                "key1": "key",
+                "value1": "value"
+            },
+            "metadata": {
+                "description": "Tag Values"
+            }
+        }
+      },
+    "variables":  {},
+    "resources": [
+          {
+            "type": "Microsoft.Storage/storageAccounts",
+            "sku": {
+                "name": "Premium_LRS",
+                "tier": "Premium"
+            },
+            "kind": "Storage",
+            "name": "[parameters('storageAccName')]",
+            "apiVersion": "2016-01-01",
+            "location": "[parameters('location')]",
+              "tags": {
+                "[parameters('tag').key1]": "[parameters('tag').value1]"
+            },
+             "properties": {
+                "storageAccType": "[parameters('storageAccType')]"
+            }
+         }
+     ]
+}
