@@ -1,0 +1,297 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "adminUsername": {
+            "type": "string",
+            "defaultValue": "datasunrise",
+            "metadata": {
+                "description": "User name for the Virtual Machine administrator. Do not use simple names such as 'admin'."
+            }
+        },
+        "adminPassword": {
+            "type": "securestring",
+            "defaultValue": "Ashpassword123",
+            "metadata": {
+                "description": "Password for the Virtual Machine administrator."
+            }
+        },
+        "datasunrisePassword": {
+            "type": "securestring",
+            "defaultValue": "datasunrise@123",
+            "metadata": {
+                "description": "Password for the DataSunrise admin user."
+            }
+        },
+        "postgrePassword": {
+            "type": "securestring",
+            "defaultValue": "postgre@123",
+            "metadata": {
+                "description": "Password for the MySQL 'root' admin user."
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]"
+        }
+    },
+    "variables": {
+        "vmSize": "Standard_A2",
+        "imagePublisher": "RedHat",
+        "imageOffer": "RHEL",
+        "rhelOSVersion": "7.2",
+        "typeHandVersion": "2.0",
+        "OSDiskName": "[concat(variables('uniqueNamePrefix'),'Disk')]",
+        "vmName": "[concat(variables('uniqueNamePrefix'),'VM')]",
+        "vmExtensionName": "datasunriseextvm",
+        "newStorageAccountName": "[concat(variables('uniqueNamePrefix'),'sa')]",
+        "networkInterfaceName": "[concat(variables('uniqueNamePrefix'),'Nic')]",
+        "rg": "[substring(uniqueString(resourceGroup().id) ,0 ,5)]",
+        "subnetName": "Subnet",
+        "uniqueNamePrefix": "[concat('dtsun',variables('rg'))]",
+        "addressPrefix": "10.0.0.0/16",
+        "subnetPrefix": "10.0.0.0/24",
+        "storageAccountType": "Standard_LRS",
+        "publicIPAddressName": "[concat(variables('uniqueNamePrefix'),'IP')]",
+        "publicIPAddressType": "Dynamic",
+        "virtualNetworkName": "[concat(variables('uniqueNamePrefix'),'VNet')]",
+        "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
+        "subnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetName'))]",
+        "installScriptName": "datariseext.sh",
+        "publicIpSetupUrl": "https://raw.githubusercontent.com/komalio/komali-test/master/datapublicip.json",
+        "storagesetupurl": "https://raw.githubusercontent.com/komalio/komali-test/master/datastg.json",
+        "vnetsetupurl": "https://raw.githubusercontent.com/komalio/komali-test/master/datavnet.json",
+        "nicSetupurl": "https://raw.githubusercontent.com/komalio/komali-test/master/datanic.json",
+        "vmsetupurl": "https://raw.githubusercontent.com/komalio/komali-test/master/datavm.json",
+        "customScriptsUrl": "https://raw.githubusercontent.com/komalio/komali-test/master/scripts/datariseext.sh",
+        "vmExesetupurl": "https://raw.githubusercontent.com/komalio/komali-test/master/datavmext.json",
+        "installcommand": "[concat('sh ', variables('installScriptName'), ' ', parameters('datasunrisePassword'), ' ', parameters('postgrePassword'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "storagesetup",
+            "apiVersion": "2015-01-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('storagesetupurl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "newstorageAccountName": {
+                        "value": "[variables('newstorageAccountName')]"
+                    },
+                    "storageAccountType": {
+                        "value": "[variables('storageAccountType')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "VnetSetup",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('vnetsetupurl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "addressPrefix": {
+                        "value": "[variables('addressPrefix')]"
+                    },
+                    "virtualNetworkName": {
+                        "value": "[variables('virtualNetworkName')]"
+                    },
+                    "subnetName": {
+                        "value": "[variables('subnetName')]"
+                    },
+                    "subnetPrefix": {
+                        "value": "[variables('subnetprefix')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "publicIpSetup",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('publicIpSetupUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "publicIPAddressName": {
+                        "value": "[variables('publicIPAddressName')]"
+                    },
+                    "uniqueNamePrefix": {
+                        "value": "[variables('uniqueNamePrefix')]"
+                    },
+                    "publicIpAddressType": {
+                        "value": "[variables('publicIpAddressType')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "vmsetup",
+            "dependsOn": [
+                "nicSetup",
+                "storagesetup"
+            ],
+            "apiVersion": "2015-01-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('vmsetupurl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "imagePublisher": {
+                        "value": "[variables('imagePublisher')]"
+                    },
+                    "imageOffer": {
+                        "value": "[variables('imageOffer')]"
+                    },
+                    "vmSize": {
+                        "value": "[variables('vmSize')]"
+                    },
+                    "osDiskName": {
+                        "value": "[variables('OSDiskName')]"
+                    },
+                    "vmname": {
+                        "value": "[variables('vmname')]"
+                    },
+                    "adminUsername": {
+                        "value": "[parameters('adminusername')]"
+                    },
+                    "adminPassword": {
+                        "value": "[parameters('adminpassword')]"
+                    },
+                    
+                    "rhelOSVersion": {
+                        "value": "[variables('rhelOSVersion')]"
+                    },
+                    "newstorageAccountName": {
+                        "value": "[variables('newstorageAccountName')]"
+                    },
+                    "nicName": {
+                        "value": "[variables('networkInterfaceName')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "nicSetup",
+            "dependsOn": [
+                "VnetSetup",
+                "publicIpSetup"
+            ],
+            "apiVersion": "2015-01-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('nicSetupurl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "networkInterfaceName": {
+                        "value": "[variables('networkInterfaceName')]"
+                    },
+                    "publicIPAddressName": {
+                        "value": "[variables('publicIPAddressName')]"
+                    },
+                    "subnetRef": {
+                        "value": "[variables('subnetRef')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "extSetup",
+            "dependsOn": [
+                "vmsetup"
+            ],
+            "apiVersion": "2015-01-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('vmExesetupurl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "vmName": {
+                        "value": "[variables('vmName')]"
+                    },
+                    "vmExtensionName": {
+                        "value": "[variables('vmExtensionName')]"
+                    },
+                    "typeHandlerVersion": {
+                        "value": "[variables('typeHandVersion')]"
+                    },
+                    "customScriptsUrl": {
+                        "value": "[variables('customScriptsUrl')]"
+                    },
+                    "commandToExecute": {
+                        "value": "[variables('installCommand')]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "link": {
+            "value": "[reference('publicIpSetup').outputs.fqdn.value]",
+            "type": "string"
+        },
+        "publicip name is": {
+            "type": "string",
+            "value": "[variables('publicIPAddressName')]"
+        },
+        "adminUsername": {
+            "type": "string",
+            "value": "[parameters('adminUsername')]"
+        },
+        "adminPassword": {
+            "type": "string",
+            "value": "[parameters('adminPassword')]"
+        },
+        "postgrePassword": {
+            "type": "string",
+            "value": "[parameters('postgrePassword')]"
+        },
+        "dataSunrise GUI Login": {
+            "type": "string",
+            "value": "admin"
+        },
+        "dataSunrise GUI Password": {
+            "type": "string",
+            "value": "[parameters('datasunrisePassword')]"
+        }
+    }
+}
