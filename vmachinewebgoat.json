@@ -17,7 +17,7 @@
         "nicName": {
             "type": "string"
         },
-        "storageAccName": {
+        "stgAccName": {
             "type": "string"
         },
         "imagePublisher": {
@@ -39,12 +39,17 @@
     "variables": {},
     "resources": [
         {
-            "comments": "Virtual Machine Resource",
-            "apiVersion": "2015-06-15",
+             
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[parameters('vmName')]",
-            "location": "[parameters('location')]",
-            "properties": {
+            "apiVersion": "2016-04-30-preview",
+            "location": "westus",
+            "plan": {
+                "name": "sandbox25",
+                "product": "hortonworks-sandbox",
+                "publisher": "hortonworks"
+            },
+           "properties": {
                 "hardwareProfile": {
                     "vmSize": "[parameters('vmsize')]"
                 },
@@ -56,10 +61,11 @@
                         "version": "[parameters('imageVersion')]"
                     },
                     "osDisk": {
+                        "osType": "Linux",
                         "name": "[parameters('vmName')]",
                         "createOption": "FromImage",
                         "vhd": {
-                            "uri": "[concat('https', '://', parameters('storageAccName'), '.blob.core.windows.net', concat('/vhds/', parameters('vmName'),'-osdisk.vhd'))]"
+                            "uri": "[concat('https', '://', parameters('stgAccName'), '.blob.core.windows.net', concat('/vhds/', parameters('vmName'),'20170327131421.vhd'))]"
                         },
                         "caching": "ReadWrite"
                     },
@@ -67,7 +73,7 @@
                 },
                 "osProfile": {
                     "computerName": "[parameters('vmName')]",
-                     "adminUsername": "[parameters('adminUsername')]",
+                    "adminUsername": "[parameters('adminUserName')]",
                     "linuxConfiguration": {
                         "disablePasswordAuthentication": false
                     },
@@ -77,11 +83,13 @@
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('nicname'))]"
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('nicName'))]"
                         }
                     ]
                 }
+                    
+                }
             }
-        }
+        
     ]
 }
