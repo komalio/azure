@@ -1,0 +1,234 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string"
+        },
+        "adminPassword": {
+            "defaultValue": "hotnworks@123",
+            "type": "securestring"
+        },
+        "stgAccName": {
+            "defaultValue": "stghotnworks",
+            "type": "string"
+        }
+    },
+    "variables": {
+        "adminUsername": "hortnworks",
+        "nicName": "nichnw",
+        "nsgName": "nsghnw",
+        "vnetName": "VNethnw",
+        "subnetName": "hnwSubnet",
+        "addressPrefixes": "10.4.2.0/24",
+        "subPrefix": "10.4.2.0/24",
+        "publicIpType": "Dynamic",
+        "publicIpName": "hortonip",
+    
+        "uniqueNamePrefix": "",
+        "vmName": "howvm",
+        "vmSize": "Standard_DS1_v2",
+        "imagePublisher": "hortonworks",
+        "imageOffer": "hortonworks-sandbox",
+        "imageSKU": "sandbox25",
+        "imageVersion": "latest",
+      
+     
+        "vnetRef": "[resourceId('Microsoft.Network/virtualNetworks',variables('vnetName'))]",
+        "subnetRef": "[concat(variables('vnetRef'),'/subnets/',variables('subnetName'))]",
+        "stgAccName": "[concat(parameters('stgAccName'),substring(uniqueString(resourceGroup().id),4,9))]",
+        "vmsetupurl": "https://raw.githubusercontent.com/komalio/komali-test/master/vmhotnworks.json",
+        "nicSetupurl": "https://raw.githubusercontent.com/komalio/komali-test/master/nichotnworks.json",
+        "publicIpSetupUrl": "https://raw.githubusercontent.com/komalio/komali-test/master/hotnworksip.json",
+        "storagesetupurl": "https://raw.githubusercontent.com/komalio/komali-test/master/hotnworksstg.json",
+        "vnetsetupurl": "https://raw.githubusercontent.com/komalio/komali-test/master/vnethotnworks.json"
+       
+    },
+    "resources": [
+    
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "vmsetup",
+            "dependsOn": [
+                "nicSetup",
+                "storagesetup"
+            ],
+            "apiVersion": "2015-01-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('vmsetupurl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "imagePublisher": {
+                        "value": "[variables('imagePublisher')]"
+                    },
+                    "imageOffer": {
+                        "value": "[variables('imageOffer')]"
+                    },
+                    "vmSize": {
+                        "value": "[variables('vmSize')]"
+                    },
+                    "imageSKU": {
+                        "value": "[variables('imageSKU')]"
+                    },
+                    "imageVersion": {
+                        "value": "[variables('imageVersion')]"
+                    },
+                    "vmName": {
+                        "value": "[variables('vmName')]"
+                    },
+                    "adminUsername": {
+                        "value": "[variables('adminUsername')]"
+                    },
+                    "adminPassword": {
+                        "value": "[parameters('adminPassword')]"
+                    },
+                    "stgAccName": {
+                        "value": "[variables('stgAccName')]"
+                    },
+                    "nicName": {
+                        "value": "[variables('nicName')]"
+                    }
+                }
+            }
+        },
+        {
+              "type": "Microsoft.Network/networkSecurityGroups",
+             "name": "[variables('nsgName')]",
+            "apiVersion": "2016-03-30",
+            "location": "westus",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "default-allow-ssh",
+                        "properties": {
+                            "protocol": "TCP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "22",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1000,
+                            "direction": "Inbound"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "publicIpSetup",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('publicIpSetupUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "publicIpName": {
+                        "value": "[variables('publicIpName')]"
+                    },
+                    "uniqueNamePrefix": {
+                        "value": "[variables('uniqueNamePrefix')]"
+                    },
+                    "publicIpType": {
+                        "value": "[variables('publicIpType')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "storagesetup",
+            "apiVersion": "2015-01-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('storagesetupurl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "stgAccName": {
+                        "value": "[variables('stgAccName')]"
+                    }
+                    
+                }
+            }
+        },
+        {
+            "name": "VnetSetup",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('vnetsetupurl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "addressPrefixes": {
+                        "value": "[variables('addressPrefixes')]"
+                    },
+                    "vnetName": {
+                        "value": "[variables('vnetName')]"
+                    },
+                    "subnetName": {
+                        "value": "[variables('subnetName')]"
+                    },
+                    "subPrefix": {
+                        "value": "[variables('subPrefix')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "nicSetup",
+            "dependsOn": [
+                "VnetSetup",
+                "[concat('Microsoft.Network/networkSecurityGroups/',variables('nsgName'))]",
+                "publicIpSetup"
+            ],
+            "apiVersion": "2016-09-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('nicSetupurl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "nicName": {
+                        "value": "[variables('nicName')]"
+                    },
+                    "nsgName": {
+                        "value": "[variables('nsgName')]"
+                    },
+                    "publicIpName": {
+                        "value": "[variables('publicIpName')]"
+                    },
+                    "subnetRef": {
+                        "value": "[variables('subnetRef')]"
+                    }
+                }
+            }
+        }
+    ]
+}
