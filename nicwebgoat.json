@@ -30,7 +30,7 @@
     "resources": [
         {  
             "type": "Microsoft.Network/networkInterfaces",
-            "name": "[parameters('nicname')]",
+            "name": "[parameters('nicName')]",
             "apiVersion": "2016-03-30",
             "location": "westus",
             "properties": {
