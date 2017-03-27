@@ -1,0 +1,35 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+            "location": {
+            "type": "string"
+        },
+            "publicIpName":{
+            "defaultValue": "hotnworksip",
+            "type": "string"
+        },
+         "publicIpType":{
+            "type": "string"
+        },
+         "uniqueNamePrefix":{
+            "type": "string"
+        }
+      },
+    "variables":  {},
+    "resources": [
+         {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[parameters('publicIpName')]",
+            "apiVersion": "2016-03-30",
+            "location": "[parameters('location')]",
+            "properties": {
+                "publicIPAllocationMethod": "[parameters('publicIpType')]",
+                "idleTimeoutInMinutes": 4,
+                "dnsSettings":{
+                    "domainNameLabel": "[parameters('uniqueNamePrefix')]"
+                }
+            }
+         }
+     ]
+}
