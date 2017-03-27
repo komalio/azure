@@ -17,7 +17,7 @@
         "nicName": {
             "type": "string"
         },
-        "storageAccName": {
+        "stgAccName": {
             "type": "string"
         },
         "imagePublisher": {
