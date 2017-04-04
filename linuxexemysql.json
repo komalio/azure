@@ -1,0 +1,213 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmName": {
+            "defaultValue": "komali",
+            "type": "String"
+        },
+        "nicName": {
+            "defaultValue": "komalinic",
+            "type": "String"
+        },
+        "nsgName": {
+            "defaultValue": "komalinsg",
+            "type": "String"
+        },
+        "publicIp": {
+            "defaultValue": "komaliip",
+            "type": "String"
+        },
+        "vnetName": {
+            "defaultValue": "komalivnet",
+            "type": "String"
+        },
+        "stgName": {
+            "defaultValue": "komalivstg",
+            "type": "String"
+        }
+    },
+    "variables": {
+            "stgName":"[concat(parameters('stgName'),substring(uniqueString(resourceGroup().id),4,9))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[parameters('vmName')]",
+            "apiVersion": "2016-04-30-preview",
+            "location": "westus",
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_A1_v2"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "Canonical",
+                        "offer": "UbuntuServer",
+                        "sku": "16.04-LTS",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Linux",
+                        "name": "[parameters('vmName')]",
+                        "createOption": "FromImage",
+                        "vhd": {
+                            "uri": "[concat('https', '://', parameters('stgName'), '.blob.core.windows.net', concat('/vhds/', parameters('vmName'),'20170404114920.vhd'))]"
+                        },
+                        "caching": "ReadWrite"
+                    },
+                    "dataDisks": []
+                },
+                "osProfile": {
+                    "computerName": "[parameters('vmName')]",
+                    "adminUsername": "[parameters('vmName')]",
+                    "adminPassword": "Ubuntuvm@123",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": false
+                    },
+                    "secrets": []
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('nicName'))]"
+                        }
+                    ]
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('stgName'))]",
+                "[resourceId('Microsoft.Network/networkInterfaces', parameters('nicName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[parameters('nicName')]",
+            "apiVersion": "2016-03-30",
+            "location": "westus",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAddress": "10.3.2.4",
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIp'))]"
+                            },
+                            "subnet": {
+                                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName')), '/subnets/default')]"
+                            }
+                        }
+                    }
+                ],
+                "dnsSettings": {
+                    "dnsServers": []
+                },
+                "enableIPForwarding": false,
+                "networkSecurityGroup": {
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsgName'))]"
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIp'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsgName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[parameters('nsgName')]",
+            "apiVersion": "2016-03-30",
+            "location": "westus",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "default-allow-ssh",
+                        "properties": {
+                            "protocol": "TCP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "22",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1000,
+                            "direction": "Inbound"
+                        }
+                    }
+                ]
+            },
+            "dependsOn": []
+        },
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[parameters('publicIp')]",
+            "apiVersion": "2016-03-30",
+            "location": "westus",
+            "properties": {
+                "publicIPAllocationMethod": "Dynamic",
+                "idleTimeoutInMinutes": 4
+            },
+            "dependsOn": []
+        },
+        {
+             "type": "Microsoft.Network/virtualNetworks",
+            "name": "[parameters('vnetName')]",
+            "apiVersion": "2016-03-30",
+            "location": "westus",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "10.3.2.0/24"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "default",
+                        "properties": {
+                            "addressPrefix": "10.3.2.0/24"
+                        }
+                    }
+                ]
+            },
+            "dependsOn": []
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "Storage",
+            "name": "[parameters('stgName')]",
+            "apiVersion": "2016-01-01",
+            "location": "westus",
+            "tags": {},
+            "properties": {},
+            "dependsOn": []
+        },
+        {
+        "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('vmName'),'/', 'mysql')]",
+            "apiVersion": "2016-04-30-preview",
+            "location": "westus",
+            "properties": {
+                "publisher": "Microsoft.OSTCExtensions",
+                "type": "CustomScriptForLinux",
+                "typeHandlerVersion": "1.4",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "fileUris": [
+                        "https://raw.githubusercontent.com/komalio/komali-test/master/script.sh"
+                    ]
+                },
+                "protectedSettings": {
+                    "commandToExecute": "./script.sh"
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines', parameters('vmName'))]"
+            ]
+        }
+    ]
+}
