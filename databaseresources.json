@@ -1,0 +1,101 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "sqlAdministratorLogin": {
+            "type": "string",
+            "metadata": {
+                "description": "The admin user of the SQL Server"
+            }
+        },
+        "sqlAdministratorLoginPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The password of the admin user of the SQL Server"
+            }
+        },
+        "sqldatabasename": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of SQL database"
+            }
+        }
+    },
+    "variables": {
+        "sqlserverName": "[concat('sqlserver', uniqueString(resourceGroup().id))]",
+        "storageKeyType": "SharedAccessKey",
+        "storageKey": "?",
+        "bacpacUri": "https://emreleasemtr.blob.core.windows.net/releasemtr/PowerGrid.bacpac"
+    },
+    "resources": [
+        {
+            "name": "[variables('sqlserverName')]",
+            "type": "Microsoft.Sql/servers",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "displayName": "SqlServer"
+            },
+            "apiVersion": "2014-04-01",
+            "properties": {
+                "administratorLogin": "[parameters('sqlAdministratorLogin')]",
+                "administratorLoginPassword": "[parameters('sqlAdministratorLoginPassword')]",
+                "version": "12.0"
+            },
+            "resources": [
+                {
+                    "name": "[parameters('sqldatabasename')]",
+                    "type": "databases",
+                    "location": "[resourceGroup().location]",
+                    "tags": {
+                        "displayName": "Database"
+                    },
+                    "apiVersion": "2015-01-01",
+                    "dependsOn": [
+                        "[variables('sqlserverName')]"
+                    ],
+                    "properties": {
+                        "edition": "Standard",
+                        "collation": "SQL_Latin1_General_CP1_CI_AS",
+                        "maxSizeBytes": "268435456000",
+                        "requestedServiceObjectiveName": "S2"
+                    },
+                    "resources": [
+                        {
+                            "name": "myImport",
+                            "type": "extensions",
+                            "apiVersion": "2014-04-01-preview",
+                            "dependsOn": [
+                                "[variables('sqlserverName')]",
+                                "[parameters('sqldatabasename')]"
+                            ],
+                            "tags": {
+                                "displayName": "myImport"
+                            },
+                            "properties": {
+                                "storageKeyType": "[variables('storageKeyType')]",
+                                "storageKey": "[variables('storageKey')]",
+                                "storageUri": "[variables('bacpacUri')]",
+                                "administratorLogin": "[parameters('sqlAdministratorLogin')]",
+                                "administratorLoginPassword": "[parameters('sqlAdministratorLoginPassword')]",
+                                "operationMode": "Import"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "firewallrules",
+                    "apiVersion": "2014-04-01",
+                    "dependsOn": [
+                        "[variables('sqlserverName')]"
+                    ],
+                    "location": "[resourceGroup().location]",
+                    "name": "AllowAllWindowsAzureIps",
+                    "properties": {
+                        "endIpAddress": "0.0.0.0",
+                        "startIpAddress": "0.0.0.0"
+                    }
+                }
+            ]
+        }
+    ]
+}
