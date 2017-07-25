@@ -1,101 +1,396 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "sqlAdministratorLogin": {
+     
+        "adminUsername": {
+            "type": "string"
+        },
+        "virtualNetworkName": {
+            "type": "string"
+        },
+        "networkInterfaceName": {
+            "type": "string"
+        },
+        "networkSecurityGroupName": {
+            "type": "string"
+        },
+        "adminPassword": {
+            "type": "securestring"
+        },
+        "sqlAddressPrefix": {
+            "type": "string"
+        },
+        "subnetName": {
+            "type": "string"
+        },
+        "sqlSubnetPrefix": {
+            "type": "string"
+        },
+        "publicIpAddressName": {
+            "type": "string"
+        },        
+        "sqlStorageWorkloadType": {
             "type": "string",
             "metadata": {
-                "description": "The admin user of the SQL Server"
-            }
+                "description": "SQL Server Virtual Machine Workload Type: GENERAL - general work load; DW - datawear house work load; OLTP - Transactional processing work load"
+            },
+            "allowedValues": [
+                "GENERAL",
+                "OLTP",
+                "DW"
+            ],
+            "defaultValue": "GENERAL"
         },
-        "sqlAdministratorLoginPassword": {
-            "type": "securestring",
-            "metadata": {
-                "description": "The password of the admin user of the SQL Server"
-            }
+        "sqlStorageDeploymentToken": {
+            "type": "int"
         },
-        "sqldatabasename": {
+        "sqlAutopatchingDayOfWeek": {
             "type": "string",
             "metadata": {
-                "description": "The name of SQL database"
-            }
+                "description": "SQL Server Auto Patching Day of A Week"
+            },
+            "allowedValues": [
+                "Everyday",
+                "Never",
+                "Sunday",
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday"
+            ],
+            "defaultValue": "Sunday"
+        },
+        "sqlAutopatchingStartHour": {
+            "type": "string",
+            "metadata": {
+                "description": "SQL Server Auto Patching Starting Hour"
+            },
+            "allowedValues": [
+                "0",
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9",
+                "10",
+                "11",
+                "12",
+                "13",
+                "14",
+                "15",
+                "16",
+                "17",
+                "18",
+                "19",
+                "20",
+                "21",
+                "22",
+                "23"
+            ],
+            "defaultValue": "2"
+        },
+        "sqlAutopatchingWindowDuration": {
+            "type": "string",
+            "metadata": {
+                "description": "SQL Server Auto Patching Duration Window in minutes"
+            },
+            "allowedValues": [
+                "30",
+                "60",
+                "90",
+                "120",
+                "150",
+                "180"
+            ],
+            "defaultValue": "60"
+        },
+        "sqldatabasename":{
+            "type": "string"
+        },
+        "sqlAuthenticationLogin": {
+            "type": "string"
+        },
+        "sqlAuthenticationPassword": {
+            "type": "securestring"
         }
     },
     "variables": {
-        "sqlserverName": "[concat('sqlserver', uniqueString(resourceGroup().id))]",
-        "storageKeyType": "SharedAccessKey",
-        "storageKey": "?",
-        "bacpacUri": "https://emreleasemtr.blob.core.windows.net/releasemtr/PowerGrid.bacpac"
+    "location":"[resourceGroup().location]",
+        "sqlAdministratorLogin":"sqluser",
+        "sqlAdministratorLoginPassword":"Sysgain@1234",
+        
+        "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
+        "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
+        "sqlservername": "sqlvm",
+        "vmSize": "Standard_DS1_v2",
+        "sqlConnectivityType": "Private",
+        "sqlStorageDisksCount":"1",
+        "sqlQueryUrl":"https://raw.githubusercontent.com/sysgain/iot-automation/dev/scripts/SQLQuery2.sql",
+        "serverName":"sqlvm",
+        "sqlUserName":"sqluser",
+        "sqlserverpwd":"Sysgain@1234",
+        "piserverscript":"https://raw.githubusercontent.com/sysgain/iot-automation/dev/scripts/PiServerSQLscript.sql",
+        "databaseName":"iottestdb"
     },
     "resources": [
         {
-            "name": "[variables('sqlserverName')]",
-            "type": "Microsoft.Sql/servers",
-            "location": "[resourceGroup().location]",
-            "tags": {
-                "displayName": "SqlServer"
-            },
-            "apiVersion": "2014-04-01",
+            "name": "[variables('sqlservername')]",
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2016-04-30-preview",
+            "location": "[variables('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkInterfaces/', parameters('networkInterfaceName'))]"
+            ],
             "properties": {
-                "administratorLogin": "[parameters('sqlAdministratorLogin')]",
-                "administratorLoginPassword": "[parameters('sqlAdministratorLoginPassword')]",
-                "version": "12.0"
-            },
-            "resources": [
-                {
-                    "name": "[parameters('sqldatabasename')]",
-                    "type": "databases",
-                    "location": "[resourceGroup().location]",
-                    "tags": {
-                        "displayName": "Database"
+                "osProfile": {
+                    "computerName": "[variables('sqlservername')]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]",
+                    "windowsConfiguration": {
+                        "provisionVmAgent": "true"
+                    }
+                },
+                "hardwareProfile": {
+                    "vmSize": "[variables('vmSize')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "MicrosoftSQLServer",
+                        "offer": "SQL2016SP1-WS2016",
+                        "sku": "Express",
+                        "version": "latest"
                     },
-                    "apiVersion": "2015-01-01",
-                    "dependsOn": [
-                        "[variables('sqlserverName')]"
-                    ],
-                    "properties": {
-                        "edition": "Standard",
-                        "collation": "SQL_Latin1_General_CP1_CI_AS",
-                        "maxSizeBytes": "268435456000",
-                        "requestedServiceObjectiveName": "S2"
+                    "osDisk": {
+                        "createOption": "fromImage",
+                        "managedDisk": {
+                            "storageAccountType": "Premium_LRS"
+                        }
                     },
-                    "resources": [
+                    "dataDisks": [
                         {
-                            "name": "myImport",
-                            "type": "extensions",
-                            "apiVersion": "2014-04-01-preview",
-                            "dependsOn": [
-                                "[variables('sqlserverName')]",
-                                "[parameters('sqldatabasename')]"
-                            ],
-                            "tags": {
-                                "displayName": "myImport"
-                            },
-                            "properties": {
-                                "storageKeyType": "[variables('storageKeyType')]",
-                                "storageKey": "[variables('storageKey')]",
-                                "storageUri": "[variables('bacpacUri')]",
-                                "administratorLogin": "[parameters('sqlAdministratorLogin')]",
-                                "administratorLoginPassword": "[parameters('sqlAdministratorLoginPassword')]",
-                                "operationMode": "Import"
+                            "createOption": "empty",
+                            "lun": 0,
+                            "diskSizeGB": "1023",
+                            "caching": "ReadOnly",
+                            "managedDisk": {
+                                "storageAccountType": "Premium_LRS"
                             }
                         }
                     ]
                 },
-                {
-                    "type": "firewallrules",
-                    "apiVersion": "2014-04-01",
-                    "dependsOn": [
-                        "[variables('sqlserverName')]"
-                    ],
-                    "location": "[resourceGroup().location]",
-                    "name": "AllowAllWindowsAzureIps",
-                    "properties": {
-                        "endIpAddress": "0.0.0.0",
-                        "startIpAddress": "0.0.0.0"
-                    }
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaceName'))]"
+                        }
+                    ]
                 }
-            ]
+            }
+        },
+        {
+            "apiVersion": "2015-06-15",
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(variables('sqlservername'), '/SqlIaasExtension')]",
+            "location": "[variables('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/', variables('sqlservername'))]"
+            ],
+            "properties": {
+                "type": "SqlIaaSAgent",
+                "publisher": "Microsoft.SqlServer.Management",
+                "typeHandlerVersion": "1.2",
+                "autoUpgradeMinorVersion": "true",
+                "settings": {
+                    "AutoTelemetrySettings": {
+                        "Region": "[variables('location')]"
+                    },
+                    "AutoPatchingSettings": {
+                        "PatchCategory": "WindowsMandatoryUpdates",
+                        "Enable": true,
+                        "DayOfWeek": "[parameters('sqlAutopatchingDayOfWeek')]",
+                        "MaintenanceWindowStartingHour": "[parameters('sqlAutopatchingStartHour')]",
+                        "MaintenanceWindowDuration": "[parameters('sqlAutopatchingWindowDuration')]"
+                    },
+                    "KeyVaultCredentialSettings": {
+                        "Enable": false,
+                        "CredentialName": ""
+                    },
+                    "ServerConfigurationsManagementSettings": {
+                        "SQLConnectivityUpdateSettings": {
+                            "ConnectivityType": "[variables('sqlConnectivityType')]",
+                            "Port": "1433"
+                        },
+                        "SQLWorkloadTypeUpdateSettings": {
+                            "SQLWorkloadType": "[parameters('sqlStorageWorkloadType')]"
+                        },
+                        "SQLStorageUpdateSettings": {
+                            "DiskCount": "[variables('sqlStorageDisksCount')]",
+                            "NumberOfColumns": "[variables('sqlStorageDisksCount')]",
+                            "StartingDeviceID": "2",
+                            "DiskConfigurationType": "New"
+                        },
+                        "AdditionalFeaturesServerConfigurations": {
+                            "IsRServicesEnabled": "false"
+                        }
+                    }
+                },
+                "protectedSettings": {
+                    "SQLAuthUpdateUserName": "[parameters('sqlAuthenticationLogin')]",
+                    "SQLAuthUpdatePassword": "[parameters('sqlAuthenticationPassword')]"
+                }
+            }
+        },
+        {
+            "name": "[concat(variables('sqlservername'),'/CustomScriptExtension')]",
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2015-06-15",
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/',variables('sqlservername'),'/extensions/SqlIaasExtension')]"
+            ],
+            "properties": {
+                "publisher": "Microsoft.Compute",
+                "type": "CustomScriptExtension",
+                "typeHandlerVersion": "1.8",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "fileUris": [
+                        "https://raw.githubusercontent.com/sysgain/iot-automation/dev/scripts/defaultdb.ps1"
+                    ]
+                },
+                "protectedSettings": {
+                    "commandToExecute": "[concat ('powershell -ExecutionPolicy Unrestricted -File defaultdb.ps1 ', variables('sqlQueryUrl'),' ',variables('serverName'),' ',variables('sqlUserName'),' ',variables('sqlserverpwd'),' ',variables('piserverscript'),' ',variables('databaseName'))]"
+                }
+            }
+        },
+
+        {
+            "name": "[parameters('virtualNetworkName')]",
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2016-12-01",
+            "location": "[variables('location')]",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[parameters('sqlAddressPrefix')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[parameters('subnetName')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('sqlSubnetPrefix')]"
+                        }
+                    }
+                ]
+            }
+        },
+        
+        {
+            "name": "[parameters('networkInterfaceName')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2016-09-01",
+            "location": "[variables('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'))]",
+                "[concat('Microsoft.Network/publicIpAddresses/', parameters('publicIpAddressName'))]",
+                "[concat('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "subnet": {
+                                "id": "[variables('subnetRef')]"
+                            },
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIpAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIpAddresses', parameters('publicIpAddressName'))]"
+                            }
+                        }
+                    }
+                ],
+                "networkSecurityGroup": {
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]"
+                }
+            }
+        },
+        
+        {
+            "name": "[parameters('publicIpAddressName')]",
+            "type": "Microsoft.Network/publicIpAddresses",
+            "apiVersion": "2016-09-01",
+            "location": "[variables('location')]",
+            "properties": {
+                "publicIpAllocationMethod": "Dynamic"
+            }
+        },
+        {
+            "name": "[parameters('networkSecurityGroupName')]",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2016-09-01",
+            "location": "[variables('location')]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "default-allow-rdp",
+                        "properties": {
+                            "priority": 1000,
+                            "sourceAddressPrefix": "*",
+                            "protocol": "TCP",
+                            "destinationPortRange": "3389",
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*"
+                        }
+                    }
+                ]
+            }
+        },
+           
+        {
+            "name": "azuresql",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2014-04-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/komalio/komali-test/master/databaseresources.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "sqlAdministratorLogin": {
+                        "value": "[variables('sqlAdministratorLogin')]"
+                    },
+                    "sqlAdministratorLoginPassword": {
+                        "value": "[variables('sqlAdministratorLoginPassword')]"
+                    },
+                    "location": {
+                        "value": "[variables('location')]"
+                    },
+                     "sqldatabasename": {
+                        "value": "[parameters('sqldatabasename')]"
+                    }
+    
+
+                }
+            }
         }
-    ]
+    ],
+    "outputs": {
+        "adminUsername": {
+            "type": "string",
+            "value": "[parameters('adminUsername')]"
+        }
+       
+    }
 }
