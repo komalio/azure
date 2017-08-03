@@ -1,12 +1,13 @@
-﻿#  Grab the Azure AD Service principal
+#  Grab the Azure AD Service principal
 
 #Example to Run Command
 #.\AAD.ps1 -TenantId "ac12acb5-a79a-4ca7-87eb-c5e6ebbbcd38" -DisplayName "myappauto" -IdentifierUris "https://yapp.azurewebsites.net"
 
 
 param(
-[string] $TenantId, [string] $DisplayName, [string] $IdentifierUris)
 
+[string] $TenantId, [string] $DisplayName, [string] $IdentifierUris)
+Set-ExecutionPolicy -ExecutionPolicy Unrestricted  -Force
 Install-Module AzureADPreview
 connect-azuread -TenantId $TenantId
 
