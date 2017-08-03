@@ -7,6 +7,9 @@
 param(
 
 [string] $TenantId, [string] $DisplayName, [string] $IdentifierUris)
+Write-Output $TenantId
+Write-Output $DisplayName
+Write-Output $IdentifierUris
 Set-ExecutionPolicy -ExecutionPolicy Unrestricted  -Force
 Install-Module AzureADPreview
 connect-azuread -TenantId $TenantId
