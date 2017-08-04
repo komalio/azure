@@ -5,13 +5,16 @@
 
 
 param(
+[string] $TenantId = "$1",
+[string] $DisplayName = "$2",
+[string] $IdentifierUris = "$3"
+)
 
-[string] $TenantId, [string] $DisplayName, [string] $IdentifierUris)
-
-Set-ExecutionPolicy -ExecutionPolicy Unrestricted  -Force
-Install-Module AzureADPreview
-connect-azuread -TenantId $TenantId
-
+$azureAccountName ="nvtuluva@sysgaincloud.onmicrosoft.com"
+$azurePassword = ConvertTo-SecureString "indiatimes@225" -AsPlainText -Force
+$psCred = New-Object System.Management.Automation.PSCredential($azureAccountName, $azurePassword)
+Install-Module AzureADPreview -Force
+connect-azuread -TenantId $TenantId -Credential $psCred -InformationAction Ignore
 $aad = (Get-AzureADServicePrincipal | `
     where {$_.ServicePrincipalNames.Contains("https://graph.windows.net")})[0]
 #  Grab the User.Read permission
