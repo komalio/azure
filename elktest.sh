@@ -79,3 +79,17 @@ curl -L -O https://download.elastic.co/beats/dashboards/beats-dashboards-1.2.2.z
 unzip beats-dashboards-*.zip >> $LOG
 cd beats-dashboards-* >> $LOG
 ./load.sh >> $LOG
+sudo apt-get update
+sudo apt-get install firewalld -y
+sudo firewall-cmd --zone=public --add-port=443/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=5044/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=5601/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=9200/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=8080/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=80/tcp --permanent
+sudo firewall-cmd --reload
+sudo service elasticsearch start
+sudo service kibana start
+sudo service logstash start
+sudo service nginx start
+
