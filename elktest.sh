@@ -5,9 +5,6 @@
 DATE=`date +%Y%m%d%T`
 LOG=/tmp/elkstack_deploy.log.$DATE
 HOSTIP=`hostname -i`
-
-
-
 # Configure Repos for Java, Elasticsearch, Kibana Packages
 echo "---Configure Repos for Java, Elasticsearch, Kibana Packages---"	>> $LOG
 sudo add-apt-repository -y ppa:webupd8team/java >> $LOG
