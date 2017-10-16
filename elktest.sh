@@ -32,7 +32,7 @@ sudo apt-get -y install oracle-java8-installer elasticsearch kibana nginx logsta
 
 #Configuring Elasticsearch
 echo "---Configuring Elasticsearch---" >> $LOG
-sudo sed -i 's/#network.host: 192.168.0.1/network.host: localhost/g' /etc/elasticsearch/elasticsearch.yml >> $LOG
+sudo sed -i 's/# network.host: 192.168.0.1/ network.host: localhost/g' /etc/elasticsearch/elasticsearch.yml >> $LOG
 sudo systemctl restart elasticsearch >> $LOG
 sudo systemctl daemon-reload >> $LOG
 sudo systemctl enable elasticsearch >> $LOG 
