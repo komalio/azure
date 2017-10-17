@@ -1,5 +1,5 @@
 #!/bin/bash
-#Date - 06102017
+#Date - 16102017
 #Developer - Sysgain
 
 DATE=`date +%Y%m%d%T`
@@ -47,9 +47,8 @@ sudo systemctl start kibana >> $LOG
 #Configuring Nginx
 echo "---Configuring Nginx---" >> $LOG
 sudo sudo -v >> $LOG
-echo "admin:`openssl passwd -apr1 'Password@!234'`" | sudo tee -a /etc/nginx/htpasswd.users >> $LOG
-cat /dev/null > /etc/nginx/sites-available/default >> $LOG
-wget https://raw.githubusercontent.com/sysgain/MSOSS/master/scripts/default -O /etc/nginx/sites-available/default >> $LOG
+echo "adminuser:`openssl passwd -apr1 'Password@1234'`" | sudo tee -a /etc/nginx/htpasswd.users >> $LOG
+sudo curl https://raw.githubusercontent.com/sysgain/oci-terraform-templates/oci-elk-stack/Elk_stack/scripts/default > /etc/nginx/sites-available/default >> $LOG
 sudo nginx -t >> $LOG
 sudo systemctl restart nginx >> $LOG
 sudo ufw allow 'Nginx Full' >> $LOG
@@ -64,10 +63,10 @@ sudo openssl req -config /etc/ssl/openssl.cnf -x509 -days 3650 -batch -nodes -ne
 
 #Configuring Logstash
 echo "---Configuring Logstash---" >> $LOG
-sudo wget https://raw.githubusercontent.com/sysgain/MSOSS/master/scripts/02-beats-input.conf -O /etc/logstash/conf.d/02-beats-input.conf >> $LOG
+sudo wget https://raw.githubusercontent.com/sysgain/oci-terraform-templates/oci-elk-stack/Elk_stack/scripts/02-beats-input.conf -O /etc/logstash/conf.d/02-beats-input.conf >> $LOG
 sudo ufw allow 5044 >> $LOG
-sudo wget https://raw.githubusercontent.com/sysgain/MSOSS/master/scripts/10-syslog-filter.conf -O /etc/logstash/conf.d/10-syslog-filter.conf >> $LOG
-sudo wget https://raw.githubusercontent.com/sysgain/MSOSS/master/scripts/30-elasticsearch-output.conf -O /etc/logstash/conf.d/30-elasticsearch-output.conf >> $LOG
+sudo wget https://raw.githubusercontent.com/sysgain/oci-terraform-templates/oci-elk-stack/Elk_stack/scripts/10-syslog-filter.conf -O /etc/logstash/conf.d/10-syslog-filter.conf >> $LOG
+sudo wget https://raw.githubusercontent.com/sysgain/oci-terraform-templates/oci-elk-stack/Elk_stack/scripts/30-elasticsearch-output.conf -O /etc/logstash/conf.d/30-elasticsearch-output.conf >> $LOG
 sudo /opt/logstash/bin/logstash --configtest -f /etc/logstash/conf.d/ >> $LOG
 sudo systemctl restart logstash >> $LOG
 sudo systemctl enable logstash >> $LOG
@@ -75,10 +74,11 @@ sudo systemctl enable logstash >> $LOG
 #Configuring Kibana Dashboards
 echo "---Configuring Kibana Dashboards---" >> $LOG
 cd ~
-curl -L -O https://download.elastic.co/beats/dashboards/beats-dashboards-1.2.2.zip >> $LOG
-unzip beats-dashboards-*.zip >> $LOG
+sudo curl -L -O https://download.elastic.co/beats/dashboards/beats-dashboards-1.2.2.zip >> $LOG
+sudo unzip beats-dashboards-*.zip >> $LOG
 cd beats-dashboards-* >> $LOG
 ./load.sh >> $LOG
+
 sudo apt-get update
 sudo apt-get install firewalld -y
 sudo firewall-cmd --zone=public --add-port=443/tcp --permanent
@@ -92,4 +92,3 @@ sudo service elasticsearch start
 sudo service kibana start
 sudo service logstash start
 sudo service nginx start
-
