@@ -1,4 +1,22 @@
 #!/bin/bash
+username=ubuntu
+pwd=gigamon@123
+sudo usermod -l $username ubuntu
+usermod -d /home/$username -m $username
+echo -e "$pwd\n$pwd" | sudo passwd $username
+file="/etc/ssh/sshd_config"
+passwd_auth="yes"
+cat $file \
+| sed -e "s:\(PasswordAuthentication\).*:PasswordAuthentication $passwd_auth:" \
+> $file.new
+mv $file.new $file
+service sshd restart
+
+sudo apt-get -y install apache2
+sudo apt-get -y install php php-mysql
+sudo apt-get install zip -y
+export DEBIAN_FRONTEND=noninteractive
+sudo -E apt-get -q -y install mysql-server
 wget https://github.com/komalio/komali-test/raw/master/DVWA-master.zip
 unzip DVWA-master.zip
 sudo mv DVWA-master /var/www/html/dvwa
