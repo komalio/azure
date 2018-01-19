@@ -1,76 +1,42 @@
 {
-        "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-    
-       "contentVersion": "1.0.0.0",
-    
+      "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+         "contentVersion": "1.0.0.0",
         "parameters": {
-    
             "location": {
-    
                 "type": "string"
-    
             },
-    
             "publicIPAddressName": {
-    
-                "type": "string"
-    
+                "type": "string"   
             },
-    
             "publicIpAddressType": {
-    
+                "type": "string" 
+                         
+            },    
+            "publicIPdnsPrefix": {            
                 "type": "string"
-    
-            },
-    
-            "publicIPdnsPrefix": {
-    
-                "type": "string"
-    
-            }
-    
+            
+            }    
         },
-    
-        "variables": {},
-    
-        "resources": [
-    
+        "variables": {}, 
+        "resources": [    
             {
-    
                 "name": "[parameters('publicIPAddressName')]",
-    
                 "type": "Microsoft.Network/publicIPAddresses",
-    
                 "apiVersion": "2017-03-01",
-    
                 "location": "[parameters('location')]",
-    
                 "properties": {
-    
                     "publicIPAllocationMethod": "[parameters('publicIpAddressType')]",
-    
                     "dnsSettings": {
-    
                         "domainNameLabel": "[parameters('publicIPdnsPrefix')]"
-    
-                    }
-    
+                    }  
                 }
-    
-            }
+            } 
     
         ],
-    
         "outputs": {
-    
             "fqdn": {
-    
-                "type": "string",
-    
+                "type": "string", 
                 "value": "[reference(parameters('publicIPAddressName')).dnsSettings.fqdn]"
-    
             }
-    
-        }
-    
-    }
+        }   
+    }       
