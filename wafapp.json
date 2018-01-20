@@ -9,8 +9,16 @@
         "type": "string"
       },
         "capacity": {
-        "type": "int"
-      },
+        "type": "int",
+       "allowedValues": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "defaultValue": 2
+    },
         "backendIpAddress1": {
         "type": "string"
       },   
