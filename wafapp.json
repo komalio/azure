@@ -5,6 +5,9 @@
         "applicationGatewaySize": {
         "type": "string"
       },
+      "location": {
+        "type": "string"
+      },
         "capacity": {
         "type": "int"
       },
@@ -51,7 +54,7 @@
     "apiVersion": "2017-06-01",
     "name": "[parameters('applicationGatewayName')]",
     "type": "Microsoft.Network/applicationGateways",
-    "location": "[resourceGroup().location]",
+    "location": "[parameters('location')]",
     "dependsOn": [
       "[parameters('virtualNetworkName')]",
       "[parameters('publicIPAddressName')]"
