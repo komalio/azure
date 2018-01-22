@@ -63,10 +63,6 @@
     "name": "[parameters('applicationGatewayName')]",
     "type": "Microsoft.Network/applicationGateways",
     "location": "[parameters('location')]",
-    "dependsOn": [
-      "[parameters('virtualNetworkName')]",
-      "[parameters('publicIPAddressName')]"
-    ],
     "properties": {
       "sku": {
         "name": "[parameters('applicationGatewaySize')]",
