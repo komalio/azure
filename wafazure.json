@@ -1,0 +1,169 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "capacity": {
+      "type": "int",
+      "allowedValues": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "defaultValue": 2,
+      "metadata": {
+        "description": "Number of instances"
+      }
+    },
+    "wafMode": {
+      "type": "string",
+      "allowedValues": [
+        "Detection",
+        "Prevention"
+      ],
+      "defaultValue": "Detection",
+      "metadata": {
+        "description": "WAF Mode"
+      }
+    }
+    },
+  "variables": {
+    "location": "[resourceGroup().location]",
+    "baseUrl": "https://raw.githubusercontent.com/komalio/komali-test/azurewaf/",
+    "publicIpSetupUrl": "[concat(variables('baseUrl'),'wafpublicip.json')]",
+    "vnetSetupurl": "[concat(variables('baseUrl'),'wafvnet.json')]",
+    "wafSetupurl": "[concat(variables('baseUrl'),'wafapp.json')]",
+    "applicationGatewayName": "applicationGateway1",
+    "publicIPAddressName": "wafpublicIp",
+    "dnsPrefix" : "[concat('appwaf',substring(uniqueString(resourceGroup().id),4,9))]",
+    "publicIPAddressType": "Dynamic",
+    "virtualNetworkName": "wafvnet",
+    "subnetName": "appGatewaySubnet",
+    "addressPrefix": "10.0.0.0/16",
+    "subnetPrefix":"10.0.0.0/28",
+    "wafRuleSetVersion": "3.0",
+    "wafRuleSetType": "OWASP",
+    "backendIpAddress1": "10.0.1.10",
+    "backendIpAddress2": "10.0.1.11",
+    "applicationGatewaySize": "WAF_Medium",
+    "wafEnabled": true,
+    "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets/', variables('virtualNetworkName'), variables('subnetName'))]",
+    "publicIPRef": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))]",
+    "applicationGatewayID": "[resourceId('Microsoft.Network/applicationGateways', variables('applicationGatewayName'))]"
+  },
+  "resources": [
+    {
+      "name": "publicIpSetup",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2017-05-01",
+      "properties": {
+      "mode": "Incremental",
+      "templateLink": {
+      "uri": "[variables('publicIpSetupUrl')]",
+      "contentVersion": "1.0.0.0"
+      },                                  
+      "parameters": {   
+          "location": {           
+             "value": "[variables('location')]"              
+        },
+          "publicIPAddressName": {         
+              "value": "[variables('publicIPAddressName')]"        
+        },                
+           "publicIPdnsPrefix": {        
+             "value": "[variables('dnsPrefix')]"        
+        },  
+           "publicIpAddressType": {       
+             "value": "[variables('publicIpAddressType')]"     
+        }
+      }             
+    }
+  },   
+  {
+    "name": "VnetSetup",
+    "type": "Microsoft.Resources/deployments",
+    "apiVersion": "2017-05-01",
+    "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+            "uri": "[variables('vnetSetupurl')]",
+            "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+            "location": {
+                "value": "[variables('location')]"
+            },
+            "addressPrefix": {
+                "value": "[variables('addressPrefix')]"
+            },
+            "virtualNetworkName": {
+                "value": "[variables('virtualNetworkName')]"
+            },
+            "subnetName": {
+                "value": "[variables('subnetName')]"
+            },
+            "subnetPrefix": {
+                "value": "[variables('subnetprefix')]"
+            }
+        }
+     }
+   },     
+ {
+    "name": "wafSetup",
+    "type": "Microsoft.Resources/deployments",
+    "apiVersion": "2017-06-01",
+    "dependsOn": [
+      "VnetSetup",
+      "publicIpSetup"
+    ],
+    "properties": {
+      "mode": "Incremental",
+      "templateLink": {
+          "uri": "[variables('wafSetupurl')]",
+          "contentVersion": "1.0.0.0"
+      },
+      "parameters": {
+          "location": {
+              "value": "[variables('location')]"
+          },
+          "applicationGatewayID": {
+              "value": "[variables('applicationGatewayID')]"
+          },
+          "publicIPRef": {
+              "value": "[variables('publicIPRef')]"
+          },
+          "subnetRef": {
+              "value": "[variables('subnetRef')]"
+          },
+          "applicationGatewayName": {
+            "value": "[variables('applicationGatewayName')]"
+          },
+          "wafRuleSetType": {
+            "value": "[variables('wafRuleSetType')]"
+          },
+          "wafRuleSetVersion": {
+            "value": "[variables('wafRuleSetVersion')]"
+          },
+          "backendIpAddress1": {
+          "value": "[variables('backendIpAddress1')]"
+          },
+          "backendIpAddress2": {
+          "value": "[variables('backendIpAddress2')]"
+         },
+         "applicationGatewaySize": {
+          "value": "[variables('applicationGatewaySize')]"
+         },
+         "capacity": {
+          "value": "[parameters('capacity')]"
+         },
+         "wafMode": {
+           "value": "[parameters('wafMode')]"
+         },
+         "wafEnabled": {
+          "value": "[variables('wafEnabled')]"
+         }
+        }
+      }
+    }
+ ]
+}
