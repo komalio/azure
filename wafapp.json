@@ -43,13 +43,7 @@
          "applicationGatewayName": {
          "type": "string"
     },
-        "virtualNetworkName": {
-        "type": "string"
-    },
-        "publicIPAddressName": {
-        "type": "string"
-    },
-        "subnetRef": {
+     "subnetRef": {
         "type": "string"
     },
         "publicIPRef": {
