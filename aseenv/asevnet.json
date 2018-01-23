@@ -1,0 +1,57 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vnetName": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string"
+        },
+        "vnetAddress": {
+            "type": "string"
+        },
+        "subnetName": {
+            "type": "string"
+        },
+        "subnetAddress": {
+            "type": "string"
+        },
+        "subnetNSGId": {
+            "type": "string"
+        },
+        "subnetRouteId": {
+            "type": "string"
+        }
+    },
+    "variables": {},
+    "resources": [
+ {
+    "apiVersion": "2016-06-01",
+    "type": "Microsoft.Network/virtualNetworks",
+    "name": "[parameters('vnetName')]",
+    "location": "[parameters('location')]",
+    "properties": {
+        "addressSpace": {
+            "addressPrefixes": [
+                "[parameters('vnetAddress')]"
+            ]
+        },
+        "subnets": [
+            {
+                "name": "[parameters('subnetName')]",
+                "properties": {
+                    "addressPrefix": "[parameters('subnetAddress')]",
+                    "networkSecurityGroup": {
+                        "id": "[parameters('subnetNSGId')]"
+                    },
+                    "routeTable": {
+                        "id": "[parameters('subnetRouteId')]"
+                    }
+                }
+            }
+        ]
+      }
+    }
+  ]
+}
