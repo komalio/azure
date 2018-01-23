@@ -1,0 +1,30 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location":{
+        "type": "string",
+        "allowedValues": [
+          "Central US",
+          "East US",
+          "East US 2",
+          "North Central US",
+          "South Central US",
+          "West US"]
+    }
+},
+"variables": {
+    "baseUrl": "https://raw.githubusercontent.com/komalio/komali-test/aseenv/aseenv/",
+    "dnsSuffix": "[concat('appdsfd',substring(uniqueString(resourceGroup().id),4,9))]",
+    "internalLoadBalancingMode": "3",
+    "vnetName": "asevnet",
+    "subnetName": "asesub",
+    "subnetNSGName": "asensg",
+    "subnetRouteTableName": "aseroute",
+    "appName": "[concat('aseapp',substring(uniqueString(resourceGroup().id),4,9))]",
+    "vnetAddress": "10.0.0.0/16",
+    "subnetAddress": "10.0.1.0/24",
+    "kind": "ASEV2",
+    "vnetId": "[resourceId('Microsoft.Network/virtualNetworks/',variables('vnetName'))]"
+},
+"resources": [
