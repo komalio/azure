@@ -1,0 +1,56 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string"
+        },
+        "appName": {
+            "type": "string"
+        },
+        "kind": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string"
+        },
+        "vnetId": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string"
+        },
+        "subnetName": {
+            "type": "string"
+        },
+        "dnsSuffix": {
+            "type": "string"
+        },
+        "internalLoadBalancingMode": {
+            "type": "string"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "name": "[parameters('appName')]",
+            "type": "Microsoft.Web/hostingEnvironments",
+            "location": "[parameters('location')]",
+            "apiVersion": "2015-02-01",
+            "kind": "[parameters('kind')]",
+            "properties": {
+                "name": "[parameters('appName')]",
+                "location": "[parameters('location')]",
+                "VirtualNetwork": {
+                    "Id": "[parameters('vnetId')]",
+                    "type": "Microsoft.Network/virtualNetworks",
+                    "Subnet": "[parameters('subnetName')]"
+                },
+                "dnsSuffix": "[parameters('dnsSuffix')]",
+                "internalLoadBalancingMode": "[parameters('internalLoadBalancingMode')]"
+            }
+            
+        }
+    ]
+}  
+     
