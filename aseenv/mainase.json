@@ -15,6 +15,10 @@
 },
 "variables": {
     "baseUrl": "https://raw.githubusercontent.com/komalio/komali-test/aseenv/aseenv/",
+    "vnetSetup": "[concat(variables('baseUrl'),'asevnet.json')]",
+    "aseRouteSetup": "[concat(variables('baseUrl'),'aseroute.json')]",
+    "aseNsgSetup": "[concat(variables('baseUrl'),'asensg.json')]",
+    "aseSetup": "[concat(variables('baseUrl'),'asehostenv.json')]",
     "dnsSuffix": "[concat('appdsfd',substring(uniqueString(resourceGroup().id),4,9))]",
     "internalLoadBalancingMode": "3",
     "vnetName": "asevnet",
@@ -25,6 +29,129 @@
     "vnetAddress": "10.0.0.0/16",
     "subnetAddress": "10.0.1.0/24",
     "kind": "ASEV2",
+    "subnetRouteId": "[resourceId('Microsoft.Network/routeTables', variables('subnetRouteTableName'))]",
+    "subnetNSGId": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('subnetNSGName'))]",
     "vnetId": "[resourceId('Microsoft.Network/virtualNetworks/',variables('vnetName'))]"
 },
 "resources": [
+    {
+        "name": "aseRouteSetup",
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2015-06-15",
+        "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+        "uri": "[variables('aseRouteSetup')]",
+        "contentVersion": "1.0.0.0"
+        },                                  
+        "parameters": {   
+            "location": {           
+               "value": "[parameters('location')]"              
+          },
+            "subnetRouteTableName": {         
+                "value": "[variables('subnetRouteTableName')]"        
+          }
+        }             
+      }
+    },
+    {
+        "name": "aseNsgSetup",
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2015-06-15",
+        "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+        "uri": "[variables('aseNsgSetup')]",
+        "contentVersion": "1.0.0.0"
+        },                                  
+        "parameters": {   
+            "location": {           
+               "value": "[parameters('location')]"              
+          },
+            "subnetNSGName": {         
+                "value": "[variables('subnetNSGName')]"        
+          }
+        }             
+      }
+    },
+    {
+        "name": "vnetSetup",
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2016-06-01",
+        "dependsOn": [
+            "aseRouteSetup",
+            "aseNsgSetup"
+          ],
+        "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+        "uri": "[variables('vnetSetup')]",
+        "contentVersion": "1.0.0.0"
+        },                                  
+        "parameters": {   
+            "location": {           
+               "value": "[parameters('location')]"              
+          },
+            "vnetName": {         
+                "value": "[variables('vnetName')]"        
+          },
+            "subnetName": {           
+            "value": "[variables('subnetName')]"              
+         },
+            "vnetAddress": {           
+            "value": "[variables('vnetAddress')]"              
+         },
+             "subnetAddress": {           
+            "value": "[variables('subnetAddress')]"              
+         },
+         "subnetNSGId": {           
+            "value": "[variables('subnetNSGId')]"              
+       },
+          "subnetRouteId": {           
+            "value": "[variables('subnetRouteId')]"              
+       }
+        }             
+      }
+    },
+     {
+          "name": "aseSetup",
+          "type": "Microsoft.Resources/deployments",
+          "apiVersion": "2015-02-01",
+          "dependsOn": [
+            "vnetSetup"
+          ],
+          "properties": {
+          "mode": "Incremental",
+          "templateLink": {
+          "uri": "[variables('aseSetup')]",
+          "contentVersion": "1.0.0.0"
+            },                                  
+            "parameters": {   
+                "location": {           
+                   "value": "[parameters('location')]"              
+              },
+                "appName": {         
+                    "value": "[variables('appName')]"        
+              },
+                 "kind": {           
+                    "value": "[variables('kind')]"              
+              },
+                 "vnetId": {           
+                  "value": "[variables('vnetId')]"              
+              },
+                 "subnetName": {           
+                   "value": "[variables('subnetName')]"              
+              },
+                "dnsSuffix": {           
+                    "value": "[variables('dnsSuffix')]"              
+              },  
+                 "internalLoadBalancingMode": {           
+                    "value": "[variables('internalLoadBalancingMode')]"              
+              }
+            }             
+          }
+        }
+      ]
+    } 
+
+    
