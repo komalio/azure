@@ -37,7 +37,7 @@
     {
         "name": "aseRouteSetup",
         "type": "Microsoft.Resources/deployments",
-        "apiVersion": "2015-06-15",
+        "apiVersion": "2017-08-01",
         "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -57,7 +57,7 @@
     {
         "name": "aseNsgSetup",
         "type": "Microsoft.Resources/deployments",
-        "apiVersion": "2015-06-15",
+        "apiVersion": "2017-08-01",
         "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -77,7 +77,7 @@
     {
         "name": "vnetSetup",
         "type": "Microsoft.Resources/deployments",
-        "apiVersion": "2016-06-01",
+        "apiVersion": "2017-08-01",
         "dependsOn": [
             "aseRouteSetup",
             "aseNsgSetup"
@@ -116,7 +116,7 @@
      {
           "name": "aseSetup",
           "type": "Microsoft.Resources/deployments",
-          "apiVersion": "2015-02-01",
+          "apiVersion": "2017-08-01",
           "dependsOn": [
             "vnetSetup"
           ],
