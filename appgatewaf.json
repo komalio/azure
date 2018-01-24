@@ -1,0 +1,167 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "applicationGateWaf": {
+            "type": "object"
+        },
+        "apiVersions": {
+            "type": "object"
+        }
+    },
+    "variables": {
+        "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets/', parameters('applicationGateWaf').virtualNetworkName, parameters('applicationGateWaf').subnetName)]",
+        "publicIPRef": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('applicationGateWaf').publicIPAddressName)]",
+        "applicationGatewayID": "[resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateWaf').applicationGatewayName)]"
+    },
+    "resources": [
+        {
+            "name": "[parameters('applicationGateWaf').virtualNetworkName]",
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion":"[parameters('apiVersions').wafNetworkApiVersion]",
+            "location": "[parameters('applicationGateWaf').location]",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[parameters('applicationGateWaf').addressPrefix]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[parameters('applicationGateWaf').subnetName]",
+                        "properties": {
+                            "addressPrefix": "[parameters('applicationGateWaf').subnetPrefix]"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "[parameters('applicationGateWaf').publicIPAddressName]",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "[parameters('apiVersions').wafNetworkApiVersion]",
+            "location": "[parameters('applicationGateWaf').location]",
+            "properties": {
+                "publicIPAllocationMethod": "[parameters('applicationGateWaf').publicIpAddressType]",
+                "dnsSettings": {
+                    "domainNameLabel": "[parameters('applicationGateWaf').publicIPdnsPrefix]"
+                }  
+            }
+        },
+        {
+            "apiVersion": "[parameters('apiVersions').wafApiVersion]",
+            "name": "[parameters('applicationGateWaf').applicationGatewayName]",
+            "type": "Microsoft.Network/applicationGateways",
+            "location": "[parameters('applicationGateWaf').location]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/virtualNetworks/', parameters('applicationGateWaf').virtualNetworkName)]",
+                "[concat('Microsoft.Network/publicIpAddresses/', parameters('applicationGateWaf').publicIpAddressName)]"
+              ],
+            "properties": {
+              "sku": {
+                "name": "[parameters('applicationGateWaf').applicationGatewaySize]",
+                "tier": "WAF",
+                "capacity": "[parameters('applicationGateWaf').capacity]"
+              },
+              "gatewayIPConfigurations": [
+                {
+                  "name": "appGatewayIpConfig",
+                  "properties": {
+                    "subnet": {
+                      "id": "[parameters('applicationGateWaf').subnetRef]"
+                    }
+                  }
+                }
+              ],
+              "frontendIPConfigurations": [
+                {
+                  "name": "appGatewayFrontendIP",
+                  "properties": {
+                    "PublicIPAddress": {
+                      "id": "[parameters('applicationGateWaf').publicIPRef]"
+                    }
+                  }
+                }
+              ],
+              "frontendPorts": [
+                {
+                  "name": "appGatewayFrontendPort",
+                  "properties": {
+                    "Port": 80
+                  }
+                }
+              ],
+              "backendAddressPools": [
+                {
+                  "name": "appGatewayBackendPool",
+                  "properties": {
+                    "BackendAddresses": [
+                      {
+                        "IpAddress": "[parameters('applicationGateWaf').backendIpAddress1]"
+                      },
+                      {
+                        "IpAddress": "[parameters('applicationGateWaf').backendIpAddress2]"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "backendHttpSettingsCollection": [
+                {
+                  "name": "appGatewayBackendHttpSettings",
+                  "properties": {
+                    "Port": 80,
+                    "Protocol": "Http",
+                    "CookieBasedAffinity": "Disabled"
+                  }
+                }
+              ],
+              "httpListeners": [
+                {
+                  "name": "appGatewayHttpListener",
+                  "properties": {
+                    "FrontendIPConfiguration": {
+                      "Id": "[concat(parameters('applicationGateWaf').applicationGatewayID, '/frontendIPConfigurations/appGatewayFrontendIP')]"
+                    },
+                    "FrontendPort": {
+                      "Id": "[concat(parameters('applicationGateWaf').applicationGatewayID, '/frontendPorts/appGatewayFrontendPort')]"
+                    },
+                    "Protocol": "Http",
+                    "SslCertificate": null
+                  }
+                }
+              ],
+              "requestRoutingRules": [
+                {
+                  "Name": "rule1",
+                  "properties": {
+                    "RuleType": "Basic",
+                    "httpListener": {
+                      "id": "[concat(parameters('applicationGateWaf').applicationGatewayID, '/httpListeners/appGatewayHttpListener')]"
+                    },
+                    "backendAddressPool": {
+                      "id": "[concat(parameters('applicationGateWaf').applicationGatewayID, '/backendAddressPools/appGatewayBackendPool')]"
+                    },
+                    "backendHttpSettings": {
+                      "id": "[concat(parameters('applicationGateWaf').applicationGatewayID, '/backendHttpSettingsCollection/appGatewayBackendHttpSettings')]"
+                    }
+                  }
+                }
+              ],
+              "webApplicationFirewallConfiguration": {
+                "enabled": "[parameters('applicationGateWaf').wafEnabled]",
+                "firewallMode": "[parameters('applicationGateWaf').wafMode]",
+                "ruleSetType": "[parameters('applicationGateWaf').wafRuleSetType]",
+                "ruleSetVersion": "[parameters('applicationGateWaf').wafRuleSetVersion]",
+                "disabledRuleGroups": []
+              }
+            }
+          } 
+    ],
+    "outputs": {
+        "fqdn": {
+            "type": "string", 
+            "value": "[reference(parameters('applicationGateWaf').publicIPAddressName).dnsSettings.fqdn]"
+        }
+   }
+}   
