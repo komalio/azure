@@ -68,7 +68,7 @@
                   "name": "appGatewayIpConfig",
                   "properties": {
                     "subnet": {
-                      "id": "[parameters('applicationGateWaf').subnetRef]"
+                      "id": "[variables('subnetRef')]"
                     }
                   }
                 }
@@ -78,7 +78,7 @@
                   "name": "appGatewayFrontendIP",
                   "properties": {
                     "PublicIPAddress": {
-                      "id": "[parameters('applicationGateWaf').publicIPRef]"
+                      "id": "[variables('publicIPRef')]"
                     }
                   }
                 }
@@ -121,10 +121,10 @@
                   "name": "appGatewayHttpListener",
                   "properties": {
                     "FrontendIPConfiguration": {
-                      "Id": "[concat(parameters('applicationGateWaf').applicationGatewayID, '/frontendIPConfigurations/appGatewayFrontendIP')]"
+                      "Id": "[concat(variables('applicationGatewayID'), '/frontendIPConfigurations/appGatewayFrontendIP')]"
                     },
                     "FrontendPort": {
-                      "Id": "[concat(parameters('applicationGateWaf').applicationGatewayID, '/frontendPorts/appGatewayFrontendPort')]"
+                      "Id": "[concat(variables('applicationGatewayID'), '/frontendPorts/appGatewayFrontendPort')]"
                     },
                     "Protocol": "Http",
                     "SslCertificate": null
@@ -137,13 +137,13 @@
                   "properties": {
                     "RuleType": "Basic",
                     "httpListener": {
-                      "id": "[concat(parameters('applicationGateWaf').applicationGatewayID, '/httpListeners/appGatewayHttpListener')]"
+                      "id": "[concat(variables('applicationGatewayID'), '/httpListeners/appGatewayHttpListener')]"
                     },
                     "backendAddressPool": {
-                      "id": "[concat(parameters('applicationGateWaf').applicationGatewayID, '/backendAddressPools/appGatewayBackendPool')]"
+                      "id": "[concat(variables('applicationGatewayID'), '/backendAddressPools/appGatewayBackendPool')]"
                     },
                     "backendHttpSettings": {
-                      "id": "[concat(parameters('applicationGateWaf').applicationGatewayID, '/backendHttpSettingsCollection/appGatewayBackendHttpSettings')]"
+                      "id": "[concat(variables('applicationGatewayID'), '/backendHttpSettingsCollection/appGatewayBackendHttpSettings')]"
                     }
                   }
                 }
@@ -159,7 +159,7 @@
           } 
     ],
     "outputs": {
-        "fqdn": {
+        "appWafFqdn": {
             "type": "string", 
             "value": "[reference(parameters('applicationGateWaf').publicIPAddressName).dnsSettings.fqdn]"
         }
