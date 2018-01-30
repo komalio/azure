@@ -1,7 +1,11 @@
-"$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+{
+    "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
 "contentVersion": "1.0.0.0",
 "parameters": {
     "location": {
+        "type": "string"
+    },
+    "appName": {
         "type": "string"
     }
 },
@@ -21,7 +25,7 @@
         "properties": {
             "name": "AppServPlan",
             "hostingEnvironmentProfile": {
-                "id": "[resourceId('Microsoft.Web/hostingEnvironments/',parameters('appName')]"
+                "id": "[resourceId('Microsoft.Web/hostingEnvironments/',parameters('appName'))]"
            }
         }
     }

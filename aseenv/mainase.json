@@ -32,7 +32,7 @@
     "subnetRouteId": "[resourceId('Microsoft.Network/routeTables', variables('subnetRouteTableName'))]",
     "subnetNSGId": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('subnetNSGName'))]",
     "vnetId": "[resourceId('Microsoft.Network/virtualNetworks/',variables('vnetName'))]",
-    "aseplan": "[concat(variables('baseUrl'),'aseserverplan.json')]",
+    "aseplan": "[concat(variables('baseUrl'),'aseserverplan.json')]"
 },
 "resources": [
     {
@@ -173,6 +173,5 @@
         }
       }
       ]
-    } 
-
-    
+  
+  }
