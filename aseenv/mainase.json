@@ -22,7 +22,7 @@
     "dnsSuffix": "[concat('appdsfd',substring(uniqueString(resourceGroup().id),4,9))]",
     "internalLoadBalancingMode": "3",
     "vnetName": "asevnet",
-    "subnetName": "asesub",
+    "subnetName": "[concat('asesubnet',substring(uniqueString(resourceGroup().id),4,9))]",
     "subnetNSGName": "asensg",
     "subnetRouteTableName": "aseroute",
     "appName": "[concat('aseapp',substring(uniqueString(resourceGroup().id),4,9))]",
@@ -31,7 +31,8 @@
     "kind": "ASEV2",
     "subnetRouteId": "[resourceId('Microsoft.Network/routeTables', variables('subnetRouteTableName'))]",
     "subnetNSGId": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('subnetNSGName'))]",
-    "vnetId": "[resourceId('Microsoft.Network/virtualNetworks/',variables('vnetName'))]"
+    "vnetId": "[resourceId('Microsoft.Network/virtualNetworks/',variables('vnetName'))]",
+    "aseplan": "[concat(variables('baseUrl'),'aseserverplan.json')]",
 },
 "resources": [
     {
@@ -150,7 +151,22 @@
               }
             }             
           }
+        },
+        {
+          "name": "aseplan",
+          "type": "Microsoft.Resources/deployments",
+          "apiVersion": "2017-08-01",
+          "properties": {
+          "mode": "Incremental",
+          "templateLink": {
+          "uri": "[variables('aseplan')]",
+          "contentVersion": "1.0.0.0"
+          },                                  
+          "parameters": {   
+    
+          }             
         }
+      }
       ]
     } 
 
