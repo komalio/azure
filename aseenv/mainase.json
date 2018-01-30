@@ -168,7 +168,10 @@
           "parameters": {   
             "location": {           
               "value": "[parameters('location')]"              
-         }
+         },
+         "appName": {         
+          "value": "[variables('appName')]"        
+    }
           }             
         }
       }
