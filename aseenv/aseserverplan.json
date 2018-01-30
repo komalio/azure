@@ -1,6 +1,9 @@
 "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
 "contentVersion": "1.0.0.0",
 "parameters": {
+    "location": {
+        "type": "string"
+    }
 },
 "variables": {},
 
@@ -9,7 +12,7 @@
         "apiVersion": "2016-03-01",
         "name": "AppServPlan",
         "type": "Microsoft.Web/serverfarms",
-        "location": "South Central US",
+        "location": "[parameters('location')]",
         "sku": {
             "name": "I1",
             "capacity": "1"

@@ -156,6 +156,9 @@
           "name": "aseplan",
           "type": "Microsoft.Resources/deployments",
           "apiVersion": "2017-08-01",
+          "dependsOn": [
+            "aseSetup"
+          ],
           "properties": {
           "mode": "Incremental",
           "templateLink": {
@@ -163,7 +166,9 @@
           "contentVersion": "1.0.0.0"
           },                                  
           "parameters": {   
-    
+            "location": {           
+              "value": "[parameters('location')]"              
+         }
           }             
         }
       }
