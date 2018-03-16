@@ -7,37 +7,6 @@
         },
         "webSiteSettings": {
             "type": "object"
-        },
-        "tag": {
-            "type": "object",
-            "defaultValue": {
-                "key1": "key",
-                "value1": "value"
-            },
-            "metadata": {
-                "description": "Tag Values"
-            }
-        },
-        "storageSettings": {
-            "type": "object"
-        },
-        "storageAccountKey": {
-            "type": "string"
-        },
-        "iotHubSettings": {
-            "type": "object"
-        },
-        "iotHubPrimaryKey": {
-            "type": "string"
-        },
-        "iotDpsSettings": {
-            "type": "object"
-        },
-        "iotHubEndPoint": {
-            "type": "string"
-        },
-        "iotDpsPrimaryKey": {
-            "type": "string"
         }
     },
     "variables": {},
