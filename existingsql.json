@@ -1,0 +1,87 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "azureSQL": {
+            "type": "object"
+        },
+        "apiVersions": {
+            "type": "object"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "apiVersion": "[parameters('apiVersions').sqlDBApiVersion]",
+            "type": "Microsoft.Sql/servers/databases",
+            "dependsOn": [
+                "[concat('Microsoft.Sql/servers/', parameters('azureSQL').serverName)]"
+            ],
+            "location": "[parameters('azureSQL').location]",
+            "name": "[parameters('azureSQL').databaseName]",
+            "properties": {
+                "collation": "[parameters('azureSQL').collation]",
+                "edition": "[parameters('azureSQL').edition]",
+                "maxSizeBytes": "[parameters('azureSQL').maxSizeBytes]",
+                "requestedServiceObjectiveName": "[parameters('azureSQL').requestedServiceObjectiveName]"
+            },
+            "resources": [
+                {
+                    "name": "myImport1",
+                    "type": "extensions",
+                    "apiVersion": "[parameters('apiVersions').sqlDBApiVersion]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Sql/servers/',parameters('azureSQL').serverName, '/databases/', parameters('azureSQL').databaseName)]"
+                    ],
+                    "properties": {
+                        "storageKeyType": "[parameters('azureSQL').storageKeyType]",
+                        "storageKey": "[parameters('azureSQL').storageKey]",
+                        "storageUri": "[parameters('azureSQL').storageUri]",
+                        "administratorLogin": "[parameters('azureSQL').sqlAuthenticationLogin]",
+                        "administratorLoginPassword": "[parameters('azureSQL').sqlAuthenticationPassword]",
+                        "operationMode": "Import"
+                    }
+                }
+            ]
+        },
+        {
+            "apiVersion": "[parameters('apiVersions').sqlDBApiVersion]",
+            "type": "Microsoft.Sql/servers/databases",
+            "dependsOn": [
+                "[concat('Microsoft.Sql/servers/', parameters('azureSQL').serverName)]"
+            ],
+            "location": "[parameters('azureSQL').location]",
+            "name": "[parameters('azureSQL').databaseName1]",
+            "properties": {
+                "collation": "[parameters('azureSQL').collation]",
+                "edition": "[parameters('azureSQL').edition]",
+                "maxSizeBytes": "[parameters('azureSQL').maxSizeBytes]",
+                "requestedServiceObjectiveName": "[parameters('azureSQL').requestedServiceObjectiveName]"
+            },
+            "resources": [
+                {
+                    "name": "myImport2",
+                    "type": "extensions",
+                    "apiVersion": "[parameters('apiVersions').sqlDBApiVersion]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Sql/servers/',parameters('azureSQL').serverName, '/databases/', parameters('azureSQL').databaseName1)]"
+                    ],
+                    "properties": {
+                        "storageKeyType": "[parameters('azureSQL').storageKeyType]",
+                        "storageKey": "[parameters('azureSQL').storageKey]",
+                        "storageUri": "[parameters('azureSQL').storageUri1]",
+                        "administratorLogin": "[parameters('azureSQL').sqlAuthenticationLogin]",
+                        "administratorLoginPassword": "[parameters('azureSQL').sqlAuthenticationPassword]",
+                        "operationMode": "Import"
+                    }
+                }
+            ]
+        }
+    ],
+    "outputs": {
+        "iotDbName": {
+            "type": "string",
+            "value": "[parameters('azureSQL').databaseName]"
+        }
+    }
+}
