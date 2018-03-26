@@ -23,7 +23,8 @@
                 "requestedServiceObjectiveName": "[parameters('azureSQL').requestedServiceObjectiveName]"
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Sql/servers', parameters('azureSQL').serverName)]"
+                "/subscriptions/2927c217-b119-4d3b-8a13-82a1c3a16c8f/resourceGroups/IOT-DemoLabs-Do-Not-Delete/providers/Microsoft.Sql/servers/parameters('azureSQL').serverName"
+                
             ],
             "resources": [
                 {
@@ -56,7 +57,7 @@
                 "requestedServiceObjectiveName": "[parameters('azureSQL').requestedServiceObjectiveName]"
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Sql/servers', parameters('azureSQL').serverName)]"
+                "/subscriptions/2927c217-b119-4d3b-8a13-82a1c3a16c8f/resourceGroups/IOT-DemoLabs-Do-Not-Delete/providers/Microsoft.Sql/servers/parameters('azureSQL').serverName"
             ],
             "resources": [
                 {
