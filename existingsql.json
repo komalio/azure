@@ -18,7 +18,7 @@
                 "[concat('Microsoft.Sql/servers/', parameters('azureSQL').serverName)]"
             ],
             "location": "[parameters('azureSQL').location]",
-            "name": "[parameters('azureSQL').databaseName]",
+            "name": "[concat(parameters('azureSQL').serverName,parameters('azureSQL').databaseName)]",
             "properties": {
                 "collation": "[parameters('azureSQL').collation]",
                 "edition": "[parameters('azureSQL').edition]",
@@ -51,7 +51,7 @@
                 "[concat('Microsoft.Sql/servers/', parameters('azureSQL').serverName)]"
             ],
             "location": "[parameters('azureSQL').location]",
-            "name": "[parameters('azureSQL').databaseName1]",
+            "name": "[concat(parameters('azureSQL').serverName,parameters('azureSQL').databaseName)]",
             "properties": {
                 "collation": "[parameters('azureSQL').collation]",
                 "edition": "[parameters('azureSQL').edition]",
