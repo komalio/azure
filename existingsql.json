@@ -23,7 +23,7 @@
                 "requestedServiceObjectiveName": "[parameters('azureSQL').requestedServiceObjectiveName]"
             },
             "dependsOn": [
-                "/subscriptions/2927c217-b119-4d3b-8a13-82a1c3a16c8f/resourceGroups/IOT-DemoLabs-Do-Not-Delete/providers/Microsoft.Sql/servers/parameters('azureSQL').serverName"
+                "/subscriptions/2927c217-b119-4d3b-8a13-82a1c3a16c8f/resourceGroups/IOT-DemoLabs-Do-Not-Delete/providers/Microsoft.Sql/servers/emsdemosqlsrv"
                 
             ],
             "resources": [
@@ -32,7 +32,7 @@
                     "type": "extensions",
                     "apiVersion": "[parameters('apiVersions').sqlDBApiVersion]",
                     "dependsOn": [
-                        "/subscriptions/2927c217-b119-4d3b-8a13-82a1c3a16c8f/resourceGroups/IOT-DemoLabs-Do-Not-Delete/providers/Microsoft.Sql/servers/parameters('azureSQL').serverName/databases/parameters('azureSQL').databaseName"
+                        "/subscriptions/2927c217-b119-4d3b-8a13-82a1c3a16c8f/resourceGroups/IOT-DemoLabs-Do-Not-Delete/providers/Microsoft.Sql/servers/emsdemosqlsrv/databases/iotdb"
                     ],
                     "properties": {
                         "storageKeyType": "[parameters('azureSQL').storageKeyType]",
@@ -57,7 +57,7 @@
                 "requestedServiceObjectiveName": "[parameters('azureSQL').requestedServiceObjectiveName]"
             },
             "dependsOn": [
-                "/subscriptions/2927c217-b119-4d3b-8a13-82a1c3a16c8f/resourceGroups/IOT-DemoLabs-Do-Not-Delete/providers/Microsoft.Sql/servers/parameters('azureSQL').serverName"
+                "/subscriptions/2927c217-b119-4d3b-8a13-82a1c3a16c8f/resourceGroups/IOT-DemoLabs-Do-Not-Delete/providers/Microsoft.Sql/servers/emsdemosqlsrv"
             ],
             "resources": [
                 {
@@ -65,7 +65,7 @@
                     "type": "extensions",
                     "apiVersion": "[parameters('apiVersions').sqlDBApiVersion]",
                     "dependsOn": [
-                        "/subscriptions/2927c217-b119-4d3b-8a13-82a1c3a16c8f/resourceGroups/IOT-DemoLabs-Do-Not-Delete/providers/Microsoft.Sql/servers/parameters('azureSQL').serverName/databases/parameters('azureSQL').databaseName1"
+                        "/subscriptions/2927c217-b119-4d3b-8a13-82a1c3a16c8f/resourceGroups/IOT-DemoLabs-Do-Not-Delete/providers/Microsoft.Sql/servers/emsdemosqlsrv/databases/webdb"
                     ],
                     "properties": {
                         "storageKeyType": "[parameters('azureSQL').storageKeyType]",
