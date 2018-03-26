@@ -16,24 +16,23 @@
             "type": "Microsoft.Sql/servers/databases",
             "location": "[parameters('azureSQL').location]",
             "name": "[concat(parameters('azureSQL').serverName,'/',parameters('azureSQL').databaseName)]",
+            "dependsOn": [
+                "/subscriptions/2927c217-b119-4d3b-8a13-82a1c3a16c8f/resourceGroups/IOT-DemoLabs-Do-Not-Delete/providers/Microsoft.Sql/servers/emsdemosqlsrv"
+                
+            ],
             "properties": {
                 "collation": "[parameters('azureSQL').collation]",
                 "edition": "[parameters('azureSQL').edition]",
                 "maxSizeBytes": "[parameters('azureSQL').maxSizeBytes]",
                 "requestedServiceObjectiveName": "[parameters('azureSQL').requestedServiceObjectiveName]"
             },
-            "dependsOn": [
-                "/subscriptions/2927c217-b119-4d3b-8a13-82a1c3a16c8f/resourceGroups/IOT-DemoLabs-Do-Not-Delete/providers/Microsoft.Sql/servers/emsdemosqlsrv"
-                
-            ],
+            
             "resources": [
                 {
                     "name": "myImport1",
                     "type": "extensions",
                     "apiVersion": "[parameters('apiVersions').sqlDBApiVersion]",
-                    "dependsOn": [
-                        "/subscriptions/2927c217-b119-4d3b-8a13-82a1c3a16c8f/resourceGroups/IOT-DemoLabs-Do-Not-Delete/providers/Microsoft.Sql/servers/emsdemosqlsrv/databases/iotdb"
-                    ],
+                    
                     "properties": {
                         "storageKeyType": "[parameters('azureSQL').storageKeyType]",
                         "storageKey": "[parameters('azureSQL').storageKey]",
@@ -64,9 +63,7 @@
                     "name": "myImport2",
                     "type": "extensions",
                     "apiVersion": "[parameters('apiVersions').sqlDBApiVersion]",
-                    "dependsOn": [
-                        "/subscriptions/2927c217-b119-4d3b-8a13-82a1c3a16c8f/resourceGroups/IOT-DemoLabs-Do-Not-Delete/providers/Microsoft.Sql/servers/emsdemosqlsrv/databases/webdb"
-                    ],
+                   
                     "properties": {
                         "storageKeyType": "[parameters('azureSQL').storageKeyType]",
                         "storageKey": "[parameters('azureSQL').storageKey]",
