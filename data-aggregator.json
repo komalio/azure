@@ -315,7 +315,7 @@
             "properties": {
                 "publisher": "Microsoft.Compute",
                 "type": "CustomScriptExtension",
-                "typeHandlerVersion": "2.0",
+                "typeHandlerVersion": "1.8",
                 "autoUpgradeMinorVersion": true,
                 "settings": {
                     "fileUris": [
