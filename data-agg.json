@@ -1,0 +1,314 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "dataAggregatorServerSettings": {
+            "type": "object"
+        },
+        "apiVersions": {
+            "type": "object"
+        },
+        "storageConnection": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', parameters('dataAggregatorServerSettings').virtualNetworkName)]",
+        "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('dataAggregatorServerSettings').subnetName)]"
+    },
+    "resources": [
+        {
+            "name": "[parameters('dataAggregatorServerSettings').virtualNetworkName]",
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "[parameters('apiVersions').networkApiVerion]",
+            "location": "[parameters('dataAggregatorServerSettings').location]",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[parameters('dataAggregatorServerSettings').addressPrefix]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[parameters('dataAggregatorServerSettings').subnetName]",
+                        "properties": {
+                            "addressPrefix": "[parameters('dataAggregatorServerSettings').subnetPrefix]"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "[parameters('dataAggregatorServerSettings').dataAggregatorDiagStgAcnt]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "[parameters('apiVersions').storageApiVersion1]",
+            "location": "[parameters('dataAggregatorServerSettings').location]",
+            "sku": {
+                "name": "Standard_LRS"
+            },
+            "kind": "Storage",
+            "properties": {}
+        },
+        {
+            "name": "[parameters('dataAggregatorServerSettings').dataAggregatorNic]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "[parameters('apiVersions').dataAggregatorApiVersion]",
+            "location": "[parameters('dataAggregatorServerSettings').location]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/publicIpAddresses/', parameters('dataAggregatorServerSettings').dataAggregatorPublicIpName)]",
+                "[concat('Microsoft.Network/networkSecurityGroups/', parameters('dataAggregatorServerSettings').dataAggregatorNSG)]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "subnet": {
+                                "id": "[variables('subnetRef')]"
+                            },
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIpAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIpAddresses', parameters('dataAggregatorServerSettings').dataAggregatorPublicIpName)]"
+                            }
+                        }
+                    }
+                ],
+                "networkSecurityGroup": {
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('dataAggregatorServerSettings').dataAggregatorNSG)]"
+                }
+            }
+        },
+        {
+            "name": "[parameters('dataAggregatorServerSettings').dataAggregatorPublicIpName]",
+            "type": "Microsoft.Network/publicIpAddresses",
+            "apiVersion": "[parameters('apiVersions').dataAggregatorApiVersion]",
+            "location": "[parameters('dataAggregatorServerSettings').location]",
+            "properties": {
+                "publicIpAllocationMethod": "[parameters('dataAggregatorServerSettings').publicIpAddressType]",
+                "dnsSettings": {
+                    "domainNameLabel": "[parameters('dataAggregatorServerSettings').dataAggregatorDnsLabelPrefix]"
+                }
+            }
+        },
+        {
+            "name": "[parameters('dataAggregatorServerSettings').dataAggregatorNSG]",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "[parameters('apiVersions').dataAggregatorApiVersion]",
+            "location": "[parameters('dataAggregatorServerSettings').location]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "default-allow-rdp",
+                        "properties": {
+                            "priority": 1000,
+                            "sourceAddressPrefix": "Internet",
+                            "protocol": "TCP",
+                            "destinationPortRange": "3389",
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*"
+                        }
+                    },
+                    {
+                        "name": "winrm",
+                        "properties": {
+                            "priority": 1001,
+                            "sourceAddressPrefix": "*",
+                            "protocol": "*",
+                            "destinationPortRange": "80",
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*"
+                        }
+                    },
+                    {
+                        "name": "winrmout",
+                        "properties": {
+                            "priority": 1002,
+                            "sourceAddressPrefix": "*",
+                            "protocol": "*",
+                            "destinationPortRange": "80",
+                            "access": "Allow",
+                            "direction": "Outbound",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*"
+                        }
+                    },
+                    {
+                        "name": "appservice",
+                        "properties": {
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "1200",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1003,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "appservice1",
+                        "properties": {
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "1200",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1004,
+                            "direction": "Outbound"
+                        }
+                    },
+                    {
+                        "name": "HTTPS",
+                        "properties": {
+                            "priority": 1005,
+                            "sourceAddressPrefix": "*",
+                            "protocol": "TCP",
+                            "destinationPortRange": "443",
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*"
+                        }
+                    },
+                    {
+                        "name": "HTTPSOut",
+                        "properties": {
+                            "priority": 1006,
+                            "sourceAddressPrefix": "*",
+                            "protocol": "*",
+                            "destinationPortRange": "443",
+                            "access": "Allow",
+                            "direction": "Outbound",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*"
+                        }
+                    },
+                    {
+                        "name": "security",
+                        "properties": {
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "5724",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1007,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "security1",
+                        "properties": {
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "5724",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1008,
+                            "direction": "Outbound"
+                        }
+                    },
+                    {
+                        "name": "winrm2",
+                        "properties": {
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "5985",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1009,
+                            "direction": "Inbound"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "[parameters('dataAggregatorServerSettings').dataAggregatorVMName]",
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "[parameters('apiVersions').computeApiVersion]",
+            "location": "[parameters('dataAggregatorServerSettings').location]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkInterfaces/', parameters('dataAggregatorServerSettings').dataAggregatorNic)]",
+                "[concat('Microsoft.Storage/storageAccounts/', parameters('dataAggregatorServerSettings').dataAggregatorDiagStgAcnt)]"
+            ],
+            "properties": {
+                "osProfile": {
+                    "computerName": "[parameters('dataAggregatorServerSettings').dataAggregatorVMName]",
+                    "adminUsername": "[parameters('dataAggregatorServerSettings').adminUsername]",
+                    "adminPassword": "[parameters('dataAggregatorServerSettings').adminPassword]",
+                    "windowsConfiguration": {
+                        "provisionVmAgent": "true"
+                    }
+                },
+                "hardwareProfile": {
+                    "vmSize": "[parameters('dataAggregatorServerSettings').dataAggregatorVMSize]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[parameters('dataAggregatorServerSettings').publisher]",
+                        "offer": "[parameters('dataAggregatorServerSettings').offer]",
+                        "sku": "[parameters('dataAggregatorServerSettings').sku]",
+                        "version": "[parameters('dataAggregatorServerSettings').version]"
+                    },
+                    "osDisk": {
+                        "createOption": "fromImage",
+                        "managedDisk": {
+                            "storageAccountType": "[parameters('dataAggregatorServerSettings').storageAccountType]"
+                        }
+                    },
+                    "dataDisks": []
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('dataAggregatorServerSettings').dataAggregatorNic)]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true,
+                        "storageUri": "[reference(resourceId('Microsoft.Storage/storageAccounts', parameters('dataAggregatorServerSettings').dataAggregatorDiagStgAcnt)).primaryEndpoints['blob']]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "[concat(parameters('dataAggregatorServerSettings').dataAggregatorVMName,'/CustomScriptExtension')]",
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "location": "[parameters('dataAggregatorServerSettings').location]",
+            "apiVersion": "[parameters('apiVersions').computeApiVersion]",
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/',parameters('dataAggregatorServerSettings').dataAggregatorVMName)]"
+            ],
+            "properties": {
+                "publisher": "Microsoft.Compute",
+                "type": "CustomScriptExtension",
+                "typeHandlerVersion": "1.8",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "fileUris": [
+                        "[parameters('dataAggregatorServerSettings').powerBIScriptUrl]"
+                    ]
+                },
+                "protectedSettings": {
+                    "commandToExecute": "[concat ('powershell -ExecutionPolicy Unrestricted -File powerBiInstall1.ps1',' ',parameters('dataAggregatorServerSettings').powerBITemplatesUrl,' ',parameters('dataAggregatorServerSettings').powerBIDesktopUrl,' ',parameters('dataAggregatorServerSettings').lightSensor,' ',parameters('dataAggregatorServerSettings').dataServiceApp,parameters('dataAggregatorServerSettings').azureConnection,' ',parameters('storageConnection'),' ',parameters('dataAggregatorServerSettings').piServerConnection)]"
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "dataAggregatorFQDN": {
+            "type": "string",
+            "value": "[reference(parameters('dataAggregatorServerSettings').dataAggregatorPublicIpName).dnsSettings.fqdn]"
+        }
+    }
+}
