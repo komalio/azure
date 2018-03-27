@@ -8,7 +8,7 @@
         "apiVersions": {
             "type": "object"
         },
-        "storageConnection": {
+        "webJobStorageKey": {
             "type": "string"
         }
     },
@@ -300,7 +300,7 @@
                     ]
                 },
                 "protectedSettings": {
-                    "commandToExecute": "[concat ('powershell -ExecutionPolicy Unrestricted -File datatest.ps1',' ',parameters('dataAggregatorServerSettings').powerBITemplatesUrl,' ',parameters('dataAggregatorServerSettings').powerBIDesktopUrl,' ',parameters('dataAggregatorServerSettings').lightSensor,' ',parameters('dataAggregatorServerSettings').dataServiceApp,' ',parameters('dataAggregatorServerSettings').azureConnection,' ',parameters('dataAggregatorServerSettings').azureConnection1,' ',parameters('dataAggregatorServerSettings').azureConnection2,' ',parameters('storageConnection'),' ',parameters('dataAggregatorServerSettings').piServerConnection,' ',parameters('dataAggregatorServerSettings').piServerConnection1,' ',parameters('dataAggregatorServerSettings').piServerConnection2)]"
+                    "commandToExecute": "[concat ('powershell -ExecutionPolicy Unrestricted -File powerBiInstall1.ps1',' ',parameters('dataAggregatorServerSettings').powerBITemplatesUrl,' ',parameters('dataAggregatorServerSettings').powerBIDesktopUrl,' ',parameters('dataAggregatorServerSettings').lightSensor,' ',parameters('dataAggregatorServerSettings').dataServiceApp,' ',parameters('dataAggregatorServerSettings').databaseName1,' ',parameters('dataAggregatorServerSettings').webjobStorageName,' ',parameters('webJobStorageKey'),' ',parameters('dataAggregatorServerSettings').databaseName)]"
                 }
             }
         }
