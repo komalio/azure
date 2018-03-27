@@ -467,7 +467,7 @@
     "outputs": {
         "primaryKey": {
             "type": "string",
-            "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('webSiteSettings').webjobStorageName), '2016-01-01').key1]"
+            "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts',parameters('webSiteSettings').webjobStorageName), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
         }
     }
 }
