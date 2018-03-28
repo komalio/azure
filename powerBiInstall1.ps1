@@ -50,34 +50,5 @@ param(
 
     # update dataservice config
 
-    $dataserviceconfig = "C:\Program Files (x86)\Default Company Name\DataServiceSetup\DataService.exe.config"
-
-    $doc = (Get-Content $dataserviceconfig) -as [Xml]
-
-    $obj = $doc.configuration.appSettings.add | where {$_.Key -eq 'AzureConnectionString'}
-
-    $azureConnection = Write-host "Server=tcp:emsdemosqlsrv.database.windows.net,1433;Initial Catalog=$($databaseName1);Persist Security Info=False;User ID=sqluser;Password=Password@1234;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
-
-    $obj.value= "$($azureConnection)"
-
-    write-output $obj.value
-
-    $obj = $doc.configuration.appSettings.add | where {$_.Key -eq 'StorageConnectionString'}
-
-    $storageConnection = Write-host "DefaultEndpointsProtocol=https;AccountName=$($webjobStorageName);AccountKey=$($webjobStorageKey);EndpointSuffix=core.windows.net"
     
-    $obj.value = "$($storageConnection)"
-   
-    write-output $obj.value
-
-    $obj = $doc.configuration.appSettings.add | where {$_.Key -eq 'PiServerConnectionString'}
-
-    $piServerConnection = Write-host "data source=tcp:emsdemosqlsrv.database.windows.net,1433;initial catalog=$($databaseName);persist security info=True;user id=sqluser;password=Password@1234"
-
-    $obj.value = "$($piServerConnection)"
-
-    write-output $obj.value
-
-    $doc.Save($dataserviceconfig)
-
-    Start-Service -SERVICENAME DataServiceEM
+    write-output $databaseName1 $webjobStorageName $webjobStorageKey $databaseName > C:\datasetupvalues.txt
