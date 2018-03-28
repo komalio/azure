@@ -24,6 +24,12 @@ param(
     [string] $databaseName = "$8"
 
     )
+    $sqlServerEndPoint = "emsdemosqlsrv.database.windows.net"
+
+    $sqlUserName = "sqluser"
+
+    $sqlPassword  = "Password@1234"
+
     Set-ExecutionPolicy -ExecutionPolicy RemoteSigned  -Force
     
     $client = new-object System.Net.WebClient
@@ -49,6 +55,6 @@ param(
     C:\PBIDesktop_x64.msi /qn /norestart ACCEPT_EULA=1
 
     # update dataservice config
-
     
-    write-output $databaseName1 $webjobStorageName $webjobStorageKey $databaseName > C:\datasetupvalues.txt
+    write-output $sqlServerEndPoint $databaseName1 $sqlUserName $sqlPassword $webjobStorageName $webjobStorageKey $databaseName > C:\datasetupvalues.txt
+    
