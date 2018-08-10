@@ -10,33 +10,6 @@
         },
         "networkSettings": {
             "type": "object"
-        },
-        "storageAccountKey": {
-            "type": "securestring"
-        },
-        "packerStorageAccountName": {
-            "type": "string"
-        },
-        "baseUrl": {
-            "type": "string"
-        },
-        "deploymentApiVersion": {
-            "type": "string"
-        },
-        "resourceGroupName": {
-            "type": "string"
-        },
-        "AzureSubscriptionId": {
-            "type": "string"
-        },
-        "AzureApplicationId": {
-            "type": "string"
-        },
-        "AzureClientSecret": {
-            "type": "string"
-        },
-        "AzureTenantId": {
-            "type": "string"
         }
     },
     "variables": {
