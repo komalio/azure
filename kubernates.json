@@ -44,7 +44,7 @@
         "suffix": "[substring(uniqueString(resourceGroup().id), 0, 5)]",
         "workspaceRegion": "East US",
         "agentVMSize": "Standard_D2_v2",
-        "osDiskSizeGB": "60",
+        "osDiskSizeGB": 1023,
         "location": "[resourceGroup().location]",
         "kubernetesVersion": "1.11.4",
         "dnsPrefix": "cluster",
