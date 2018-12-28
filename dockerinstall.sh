@@ -5,8 +5,6 @@ AZ_REPO=$(lsb_release -cs)
 LOG="/tmp/install.log"
 GIT_URL="$1"
 GIT_PATH="/var/lib/waagent/custom-script/download/0/ProjectEdison"
-git clone $1
-echo "----------script executed successfully-----" >> $LOG
 
 #Installing Azure CLI
 sudo apt-get install apt-transport-https lsb-release ca-certificates curl software-properties-common git -y
@@ -54,7 +52,7 @@ if [ -d $GIT_PATH ]
 then
         echo "------------------------------------" >> $LOG
         echo "The $GIT_PATH exist & clone successful" >> $LOG
-        cd /$GIT_PATH
+        cd $GIT_PATH
         sudo docker-compose build
 
 else
