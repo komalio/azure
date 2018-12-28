@@ -6,7 +6,7 @@ LOG="/tmp/install.log"
 GIT_URL="$1"
 GIT_PATH="ProjectEdison"
 git clone $1
-echo "----------script executed successfully-----" >> /tmp/scriptlogs.txt
+echo "----------script executed successfully-----" >> $LOG
 
 #Installing Azure CLI
 sudo apt-get install apt-transport-https lsb-release ca-certificates curl software-properties-common git -y
