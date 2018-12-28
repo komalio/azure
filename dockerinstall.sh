@@ -2,7 +2,7 @@
 #Comment - Installs the required packages for building images
 
 AZ_REPO=$(lsb_release -cs)
-LOG="/tmp/install.log"
+LOG="/tmp/install.log.`date +%d%m%Y_%T`"
 GIT_URL="$1"
 GIT_PATH="/var/lib/waagent/custom-script/download/0/ProjectEdison"
 
