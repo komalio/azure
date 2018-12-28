@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #Comment - Installs the required packages for building images
 
 AZ_REPO=$(lsb_release -cs)
