@@ -19,16 +19,16 @@
     },
     "variables": {
         "location": "[resourceGroup().location]",
-        "cliDeployVMName": "clideployvm",
+        "cliDeployVMName": "[concat('clideployvm',variables('suffix'))]",
         "virtualNetworkName": "[concat('clideployVnet',variables('suffix'))]",
         "suffix": "[substring(uniqueString(resourceGroup().id), 0, 5)]",
-        "subnetName": "clideploysubnet",
+        "subnetName": "[concat('clideploysubnet',variables('suffix'))]",
         "addressPrefix": "10.0.0.0/16",
         "subnetPrefix": "10.0.1.0/24",
         "cliDeployVMSize": "Standard_DS2_v2",
-        "cliDeployNic": "clideploy-nic",
-        "cliDeployNSG": "clideploy-nsg",
-        "PublicIpName": "clideploy-pip",
+        "cliDeployNic": "[concat('clideploynic',variables('suffix'))]",
+        "cliDeployNSG": "[concat('clideploy-nsg',variables('suffix'))]",
+        "PublicIpName": "[concat('clideploy-pip',variables('suffix'))]",
         "computeApiVersion": "2016-04-30-preview",
         "cliDeployVmApiVersion": "2016-09-01",
         "networkApiVersion": "2017-08-01",
@@ -40,6 +40,10 @@
         "sku": "18.04-LTS",
         "version": "latest",
         "gitUrl": "https://github.com/litebulb/ProjectEdison.git",
+        "acrUserName": "projectedisonregistry",
+        "acrServerName": "projectedisonregistry.azurecr.io",
+        "acrPassword": "V7EbL2g95+AvGbRXw=CR9VNm6WeOYkLA",
+        "acrTag": "v1",
         "storageAccountType": "Standard_LRS",
         "publicIpAddressType": "Dynamic",
         "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
@@ -261,9 +265,9 @@
                 "autoUpgradeMinorVersion": true,
                 "settings": {
                     "fileUris": [
-                        "https://raw.githubusercontent.com/komalio/komali-test/master/dockerinstall.sh"
+                        "https://raw.githubusercontent.com/komalio/komali-test/master/scripts/dockerimages.sh"
                     ],
-                    "commandToExecute": "[concat('sh dockerinstall.sh', ' ', variables('gitUrl'))]"
+                    "commandToExecute": "[concat('sh dockerimages.sh', ' ', variables('gitUrl'), ' ', variables('acrServerName'), ' ', variables('acrUserName'), ' ', variables('acrPassword'), ' ', variables('acrTag'))]"
                 }
             }
         }
