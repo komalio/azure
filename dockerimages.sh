@@ -19,9 +19,8 @@ export SignalCONN=$11
 export IoTHubControllerSRT=$12
 export NotificationHubSRT=$13
 
-
 #Installing Azure CLI
-sudo apt-get install apt-transport-https lsb-release ca-certificates curl software-properties-common gnupg2 pass -y
+sudo apt-get install apt-transport-https lsb-release ca-certificates curl software-properties-common gnupg2 pass jq -y
 sleep 10
 echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" | sudo tee /etc/apt/sources.list.d/azure-cli.list
 sudo apt-key --keyring /etc/apt/trusted.gpg.d/Microsoft.gpg adv --keyserver packages.microsoft.com --recv-keys BC528686B50D79E339D3721CEB3E94ADBE1229CF
@@ -68,7 +67,7 @@ curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
 echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
 sudo apt-get update
 sudo apt-get install -y kubectl
-kubectl version
+kubectl --help
 if [ $? -eq 0 ]
 then
 echo "------------------------------------" >> $LOG
@@ -96,22 +95,22 @@ fi
 #Checking for Edison images
 
         IMAGE=`docker images edison* --format "{{.Repository}}" | wc -l`
-        
+
         if [ $IMAGE -eq 11 ]
         then
             echo "------------------------------------" >> $LOG
             echo "All the 11 Edison Images are successfully built" >> $LOG
             echo "$ACR_PASSWD" | docker login $ACR_SRVNAME -u $ACR_USERNAME --password-stdin >> $LOG
            IMAGE_NAMES=`docker images edison* --format "{{.Repository}}"`
-                for i in $IMAGE_NAMES 
-                    do  
+                for i in $IMAGE_NAMES
+                    do
                         echo "------------------------------------" >> $LOG
                         echo "$i" >> $LOG
                         docker tag $i $ACR_SRVNAME/$i:$TAG
                         docker push $ACR_SRVNAME/$i:$TAG
                         echo "The Image $i is successfully pushed"
-                    done      
-        else 
+                    done
+        else
             echo "Edison Images didn't built" >>  $LOG
         fi
 #Updating the Common.secrets file
