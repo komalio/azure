@@ -1,0 +1,277 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "cliDeployVmAdminUserName": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "username for linux Server"
+            }
+        },
+        "cliDeployVmAdminPassword": {
+            "type": "securestring",
+            "defaultValue": "",
+            "metadata": {
+                "description": "password for linux Server"
+            }
+        }
+    },
+    "variables": {
+        "location": "[resourceGroup().location]",
+        "cliDeployVMName": "clideployvm",
+        "virtualNetworkName": "[concat('clideployVnet',variables('suffix'))]",
+        "suffix": "[substring(uniqueString(resourceGroup().id), 0, 5)]",
+        "subnetName": "clideploysubnet",
+        "addressPrefix": "10.0.0.0/16",
+        "subnetPrefix": "10.0.1.0/24",
+        "cliDeployVMSize": "Standard_DS2_v2",
+        "cliDeployNic": "clideploy-nic",
+        "cliDeployNSG": "clideploy-nsg",
+        "PublicIpName": "clideploy-pip",
+        "computeApiVersion": "2016-04-30-preview",
+        "cliDeployVmApiVersion": "2016-09-01",
+        "networkApiVersion": "2017-08-01",
+        "storageApiVersion": "2016-01-01",
+        "cliDeployDiagStgAcnt": "[concat('clistrg',variables('suffix'))]",
+        "dnsLabelPrefix": "[concat('clideployserver',variables('suffix'))]",
+        "publisher": "Canonical",
+        "offer": "UbuntuServer",
+        "sku": "18.04-LTS",
+        "version": "latest",
+        "gitUrl": "https://github.com/litebulb/ProjectEdison.git",
+        "storageAccountType": "Standard_LRS",
+        "publicIpAddressType": "Dynamic",
+        "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
+        "subnetRef": "[concat(variables('vnetId'), '/subnets/', variables('subnetName'))]",
+        "RG-name":"[resourceGroup().name]"
+    },
+    "resources": [
+        {
+            "name": "[variables('virtualNetworkName')]",
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "[variables('networkApiVersion')]",
+            "location": "[variables('location')]",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[variables('addressPrefix')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[variables('subnetName')]",
+                        "properties": {
+                            "addressPrefix": "[variables('subnetPrefix')]"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "[variables('cliDeployDiagStgAcnt')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "[variables('storageApiVersion')]",
+            "location": "[variables('location')]",
+            "sku": {
+                "name": "[variables('storageAccountType')]"
+            },
+            "kind": "Storage",
+            "properties": {}
+        },
+        {
+            "name": "[variables('cliDeployNic')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "[variables('cliDeployVmApiVersion')]",
+            "location": "[variables('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/publicIpAddresses/', variables('publicIpName'))]",
+                "[concat('Microsoft.Network/networkSecurityGroups/', variables('cliDeployNSG'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "subnet": {
+                                "id": "[variables('subnetRef')]"
+                            },
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIpAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIpAddresses', variables('PublicIpName'))]"
+                            }
+                        }
+                    }
+                ],
+                "networkSecurityGroup": {
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('cliDeployNSG'))]"
+                }
+            }
+        },
+        {
+            "name": "[variables('publicIpName')]",
+            "type": "Microsoft.Network/publicIpAddresses",
+            "apiVersion": "[variables('cliDeployVmApiVersion')]",
+            "location": "[variables('location')]",
+            "properties": {
+                "publicIpAllocationMethod": "[variables('publicIpAddressType')]",
+                "dnsSettings": {
+                    "domainNameLabel": "[variables('dnsLabelPrefix')]"
+                }
+            }
+        },
+        {
+            "name": "[variables('cliDeployNSG')]",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "[variables('cliDeployVmApiVersion')]",
+            "location": "[variables('location')]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "default",
+                        "properties": {
+                            "priority": 1000,
+                            "sourceAddressPrefix": "Internet",
+                            "protocol": "TCP",
+                            "destinationPortRange": "22",
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*"
+                        }
+                    },
+                    {
+                        "name": "http",
+                        "properties": {
+                            "priority": 1001,
+                            "sourceAddressPrefix": "*",
+                            "protocol": "*",
+                            "destinationPortRange": "80",
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*"
+                        }
+                    },
+                    {
+                        "name": "httpout",
+                        "properties": {
+                            "priority": 1002,
+                            "sourceAddressPrefix": "*",
+                            "protocol": "*",
+                            "destinationPortRange": "80",
+                            "access": "Allow",
+                            "direction": "Outbound",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*"
+                        }
+                    },
+                    {
+                        "name": "HTTPS",
+                        "properties": {
+                            "priority": 1005,
+                            "sourceAddressPrefix": "*",
+                            "protocol": "TCP",
+                            "destinationPortRange": "443",
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*"
+                        }
+                    },
+                    {
+                        "name": "HTTPSOut",
+                        "properties": {
+                            "priority": 1006,
+                            "sourceAddressPrefix": "*",
+                            "protocol": "*",
+                            "destinationPortRange": "443",
+                            "access": "Allow",
+                            "direction": "Outbound",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "[variables('cliDeployVmName')]",
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "[variables('computeApiVersion')]",
+            "location": "[variables('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkInterfaces/', variables('cliDeployNic'))]",
+                "[concat('Microsoft.Storage/storageAccounts/', variables('cliDeployDiagStgAcnt'))]"
+            ],
+            "properties": {
+                "osProfile": {
+                    "computerName": "[variables('cliDeployVmName')]",
+                    "adminUsername": "[parameters('cliDeployVmadminUsername')]",
+                    "adminPassword": "[parameters('cliDeployVmadminPassword')]",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": false
+                    }
+                },
+                "hardwareProfile": {
+                    "vmSize": "[variables('cliDeployVmSize')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[variables('publisher')]",
+                        "offer": "[variables('offer')]",
+                        "sku": "[variables('sku')]",
+                        "version": "[variables('version')]"
+                    },
+                    "osDisk": {
+                        "createOption": "fromImage",
+                        "managedDisk": {
+                            "storageAccountType": "[variables('storageAccountType')]"
+                        }
+                    },
+                    "dataDisks": []
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('cliDeployNic'))]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true,
+                        "storageUri": "[reference(resourceId('Microsoft.Storage/storageAccounts', variables('cliDeployDiagStgAcnt'))).primaryEndpoints['blob']]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(variables('cliDeployVmName'),'/Extensions')]",
+            "location": "[variables('location')]",
+            "apiVersion": "[variables('computeApiVersion')]",
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/',variables('cliDeployVmName'))]"
+            ],
+            "properties": {
+                "publisher": "Microsoft.Azure.Extensions",
+                "type": "CustomScript",
+                "typeHandlerVersion": "2.0",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "fileUris": [
+                        "https://raw.githubusercontent.com/komalio/komali-test/master/dockerinstall.sh"
+                    ],
+                    "commandToExecute": "[concat('sh dockerinstall.sh', ' ', variables('gitUrl'))]"
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "cliDeployVmFQDN": {
+            "type": "string",
+            "value": "[reference(variables('publicIpName')).dnsSettings.fqdn]"
+        }
+    }
+}
