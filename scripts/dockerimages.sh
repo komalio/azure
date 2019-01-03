@@ -77,7 +77,7 @@ fi
             echo "------------------------------------" >> $LOG
             echo "All the 11 Edison Images are successfully built" >> $LOG
             echo "$ACR_PASSWD" | docker login $ACR_SRVNAME -u $ACR_USERNAME --password-stdin >> $LOG
-            IMAGE_NAMES=`docker images edison* --format "{{.Repository}}"
+           IMAGE_NAMES=`docker images edison* --format "{{.Repository}}"`
                 for i in $IMAGE_NAMES 
                     do  
                         echo "------------------------------------" >> $LOG
