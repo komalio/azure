@@ -60,7 +60,7 @@ if [ -d $GIT_PATH ]
 then
         echo "------------------------------------" >> $LOG
         echo "The $GIT_PATH exist & clone successful" >> $LOG
-        cd $GIT_PATH
+        cd $GIT_PATH/ProjectEdison
         sudo docker-compose build
 
 else
