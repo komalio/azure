@@ -9,7 +9,7 @@ ACR_SRVNAME="$2"
 ACR_USERNAME="$3"
 ACR_PASSWD="$4"
 TAG="$5"
-GIT_PATH="/var/lib/waagent/custom-script/download/0/ProjectEdison"
+GIT_PATH=`pwd`
 
 #Installing Azure CLI
 sudo apt-get install apt-transport-https lsb-release ca-certificates curl software-properties-common gnupg2 pass -y
