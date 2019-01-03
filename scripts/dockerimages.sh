@@ -89,3 +89,18 @@ fi
         else 
             echo "Edison Images didn't built" >>  $LOG
         fi
+
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
+sudo apt-get update
+sudo apt-get install -y kubectl
+kubectl version
+ 
+if [ $? -eq 0 ]
+then
+echo "------------------------------------" >> $LOG
+echo "kubectl installation is successful" >> $LOG
+else
+echo "------------------------------------" >> $LOG
+echo "kubectl installation failed" >> $LOG
+fi
