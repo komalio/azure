@@ -48,7 +48,15 @@
         "publicIpAddressType": "Dynamic",
         "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
         "subnetRef": "[concat(variables('vnetId'), '/subnets/', variables('subnetName'))]",
-        "RG-name":"[resourceGroup().name]"
+        "RG-name":"[resourceGroup().name]",
+        "cosmosdbKey": "dQb5ovrR1RIb9wYKy19w5nN1TJbqMHWq2d5VK2q7MRcbTdGrMpQVamLnBlkBsQINXPBtTt2VP6vELvGdGY8pvg==",
+        "serviceBusConnection": "Endpoint=sb://snamespace5jsj.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=HeUrs2hOT4YlfrX2KTHaGI7alfPwO4sVXemHEeJW25c=",
+        "rabbitMquser": "Admin",
+        "rabbitMqPassword": "Edison1234",
+        "adSecret": "x18YqFwWKcHxyCW7bDxtxp2+2eY2GR3pzEFSfdLIpFg=",
+        "signallrconnecion": "Endpoint=https://signalr5jsj.service.signalr.net;AccessKey=7388PRxlqyhOGojKxnWDZ0uWdNFwe4v80tNZtS3HJ8o=;Version=1.0;",
+        "notificationhubConn": "Endpoint=sb://notificationhubnsll7h.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=z4gdETDdFYxprYcbWPlQ8LIqVx/AgZoY0NXFC6oEUTg=",
+        "iothubConn": "HostName=edisonhubll7h.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=tlbPsBuWjNOlCd9nBVsliRhT/AbsrVdkC0hhTWIBCKM="
     },
     "resources": [
         {
@@ -265,9 +273,9 @@
                 "autoUpgradeMinorVersion": true,
                 "settings": {
                     "fileUris": [
-                        "https://raw.githubusercontent.com/komalio/komali-test/master/scripts/dockerimages.sh"
+                        "https://raw.githubusercontent.com/komalio/komali-test/master/dockerimages.sh"
                     ],
-                    "commandToExecute": "[concat('sh dockerimages.sh', ' ', variables('gitUrl'), ' ', variables('acrServerName'), ' ', variables('acrUserName'), ' ', variables('acrPassword'), ' ', variables('acrTag'))]"
+                    "commandToExecute": "[concat('sh dockerimages.sh', ' ', variables('gitUrl'), ' ', variables('acrServerName'), ' ', variables('acrUserName'), ' ', variables('acrPassword'), ' ', variables('acrTag'), ' ', variables('cosmosdbKey'), ' ', variables('serviceBusConnection'), ' ', variables('rabbitMquser'), ' ', variables('rabbitMqPassword'), ' ', variables('adSecret'), ' ', variables('signallrconnecion'), ' ', variables('iothubConn'), ' ', variables('notificationhubConn'))]"
                 }
             }
         }
