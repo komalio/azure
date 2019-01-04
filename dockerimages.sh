@@ -1,6 +1,5 @@
 #!/bin/bash
 #Comment - Installs the required packages for building images
-#Author - Komali and gang
 
 AZ_REPO=$(lsb_release -cs)
 LOG="/tmp/install.log.`date +%d%m%Y_%T`"
@@ -10,14 +9,14 @@ ACR_USERNAME="$3"
 ACR_PASSWD="$4"
 TAG="$5"
 GIT_PATH=`pwd`
-export CosmosDbSRT=$6
-export AzureServiceBusCONN=$7
-export ServiceBusRabbitMQUSR=$8
-export ServiceBusRabbitMQPWD=$9
-export AzureAdSRT=$10
-export SignalCONN=$11
-export IoTHubControllerSRT=$12
-export NotificationHubSRT=$13
+export CosmosDbSRT="$6"
+export AzureServiceBusCONN="$7"
+export ServiceBusRabbitMQUSR="$8"
+export ServiceBusRabbitMQPWD="$9"
+export AzureAdSRT="$10"
+export SignalCONN="$11"
+export IoTHubControllerSRT="$12"
+export NotificationHubSRT="$13"
 echo "$CosmosDbSRT" >>  $LOG
 echo "$AzureServiceBusCONN" >>  $LOG
 echo "$ServiceBusRabbitMQUSR" >>  $LOG
