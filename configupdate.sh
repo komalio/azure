@@ -10,41 +10,17 @@ ACR_USERNAME="$3"
 ACR_PASSWD="$4"
 TAG="$5"
 GIT_PATH=`pwd`
-cosmosdbKey:"$6"
-rabbitMquser:"$8"
-rabbitMqPassword:"$9"
-adSecret:"$10"
-signallrconnecion:"$11"
-serviceBusConnection:"$7"
-iothubConn:"$12"
-notificationhubConn:"$13"
+export CosmosDbSRT="$6"
+export ServiceBusRabbitMQUSR="$7"
+export ServiceBusRabbitMQPWD="$8"
+export AzureAdSRT="$9"
 
-echo "$cosmosdbKey" >> LOG
-echo "$serviceBusConnection" >> LOG
-echo "$rabbitMquser" >> LOG
-echo "$rabbitMqPassword" >> LOG
-echo "$signallrconnecion" >> LOG
-echo "$adSecret" >> LOG
-echo "$notificationhubConn" >> LOG
-echo "$iothubConn" >> LOG
 
-export CosmosDbSRT="$cosmosdbKey"
-export AzureServiceBusCONN="$serviceBusConnection"
-export ServiceBusRabbitMQUSR="$rabbitMquser"
-export ServiceBusRabbitMQPWD="$rabbitMqPassword"
-export AzureAdSRT="$adSecret"
-export SignalCONN="$signallrconnecion"
-export IoTHubControllerSRT="$iothubConn"
-export NotificationHubSRT="$notificationhubConn"
+echo "$CosmosDbSRT" >>  $LOG
+echo "$ServiceBusRabbitMQUSR" >>  $LOG
+echo "$ServiceBusRabbitMQPWD" >>  $LOG
+echo "$AzureAdSRT" >>  $LOG
 
-echo "$CosmosDbSRT" >> $LOG
-echo "$AzureServiceBusCONN" >> $LOG
-echo "$ServiceBusRabbitMQUSR" >> $LOG
-echo "$ServiceBusRabbitMQPWD" >> $LOG
-echo "$AzureAdSRT" >> $LOG
-echo "$SignalCONN" >> $LOG
-echo "$IoTHubControllerSRT" >> $LOG
-echo "$NotificationHubSRT" >> $LOG
 
 
 #Installing Azure CLI
