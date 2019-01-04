@@ -18,6 +18,14 @@ export AzureAdSRT=$10
 export SignalCONN=$11
 export IoTHubControllerSRT=$12
 export NotificationHubSRT=$13
+echo "$CosmosDbSRT" >>  $LOG
+echo "$AzureServiceBusCONN" >>  $LOG
+echo "$ServiceBusRabbitMQUSR" >>  $LOG
+echo "$ServiceBusRabbitMQPWD" >>  $LOG
+echo "$AzureAdSRT" >>  $LOG
+echo "$SignalCONN" >>  $LOG
+echo "$IoTHubControllerSRT" >>  $LOG
+echo "$NotificationHubSRT" >>  $LOG
 
 #Installing Azure CLI
 sudo apt-get install apt-transport-https lsb-release ca-certificates curl software-properties-common gnupg2 pass jq -y
