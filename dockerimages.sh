@@ -16,8 +16,9 @@ rabbitMquser:"$8"
 rabbitMqPassword:"$9"
 adSecret:"$10"
 signallrconnecion:"$11"
-notificationhubConn:"$12"
-iothubConn:"$13"
+iothubConn:"$12"
+notificationhubConn:"$13"
+
 
 echo "$cosmosdbKey" >>  $LOG
 echo "$serviceBusConnection" >>  $LOG
