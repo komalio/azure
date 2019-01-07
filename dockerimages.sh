@@ -10,43 +10,15 @@ ACR_USERNAME="$3"
 ACR_PASSWD="$4"
 TAG="$5"
 GIT_PATH=`pwd`
-cosmosdbKey:"$6"
-serviceBusConnection:"$7"
-rabbitMquser:"$8"
-rabbitMqPassword:"$9"
-adSecret:"$10"
-signallrconnecion:"$11"
-iothubConn:"$12"
-notificationhubConn:"$13"
 
-
-echo "$cosmosdbKey" >>  $LOG
-echo "$serviceBusConnection" >>  $LOG
-echo "$rabbitMquser" >>  $LOG
-echo "$rabbitMqPassword" >>  $LOG
-echo "$signallrconnecion" >>  $LOG
-echo "$adSecret" >>  $LOG
-echo "$notificationhubConn" >>  $LOG
-echo "$iothubConn" >>  $LOG
-
-export CosmosDbSRT="$cosmosdbKey"
-export AzureServiceBusCONN="$serviceBusConnection"
-export ServiceBusRabbitMQUSR="$rabbitMquser"
-export ServiceBusRabbitMQPWD="$rabbitMqPassword"
-export AzureAdSRT="$adSecret"
-export SignalCONN="$signallrconnecion"
-export IoTHubControllerSRT="$iothubConn"
-export NotificationHubSRT="$notificationhubConn"
-
-echo "$CosmosDbSRT" >>  $LOG
-echo "$AzureServiceBusCONN" >>  $LOG
-echo "$ServiceBusRabbitMQUSR" >>  $LOG
-echo "$ServiceBusRabbitMQPWD" >>  $LOG
-echo "$AzureAdSRT" >>  $LOG
-echo "$SignalCONN" >>  $LOG
-echo "$IoTHubControllerSRT" >>  $LOG
-echo "$NotificationHubSRT" >>  $LOG
-
+export CosmosDbSRT="$6"
+export AzureServiceBusCONN="$7"
+export ServiceBusRabbitMQUSR="$8"
+export ServiceBusRabbitMQPWD="$9"
+export AzureAdSRT="$10"
+export SignalCONN="$11"
+export IoTHubControllerSRT="$12"
+export NotificationHubSRT="$13"
 
 #Installing Azure CLI
 sudo apt-get install apt-transport-https lsb-release ca-certificates curl software-properties-common gnupg2 pass jq -y
