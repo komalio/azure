@@ -10,18 +10,30 @@ ACR_USERNAME="$3"
 ACR_PASSWD="$4"
 TAG="$5"
 GIT_PATH=`pwd`
+$IoThubName="$10"
+$semcol="$11"
+$iothubPrimarykey="$12"
+$servicebusName="$13"
+$queueKey="$14"
+$queueName="$15"
+$notifactionHubName="$16"
+$notificationKey="$17"
+iothubConn='HostName='$IoThubName.azure-devices.net$semcol'SharedAccessKeyName=iothubowner'$semcol'SharedAccessKey='$iothubPrimarykey
+serviceBusConn='Endpoint=sb://'$servicebusName.servicebus.windows.net/$semcol'SharedAccessKeyName=iothubroutes_'$semicol'SharedAccessKey='$queueKey$semicol'EntityPath='$queueName
+notificationConn='Endpoint=sb://'$notifactionHubName.servicebus.windows.net/$semcol'SharedAccessKeyName=DefaultFullSharedAccessSignature'$semcol'SharedAccessKey='$notificationKey
+
+echo "$iothubConn" >> $LOG
+echo "$serviceBusConn" >> $LOG
+echo "$notificationConn" >> $LOG
+
 export CosmosDbSRT="$6"
+export AzureServiceBusCONN="$serviceBusConn"
 export ServiceBusRabbitMQUSR="$7"
 export ServiceBusRabbitMQPWD="$8"
 export AzureAdSRT="$9"
-
-
-echo "$CosmosDbSRT" >>  $LOG
-echo "$ServiceBusRabbitMQUSR" >>  $LOG
-echo "$ServiceBusRabbitMQPWD" >>  $LOG
-echo "$AzureAdSRT" >>  $LOG
-
-
+#export SignalCONN="$"
+export IoTHubControllerSRT="$iothubConn"
+export NotificationHubSRT="$notificationConn"
 
 #Installing Azure CLI
 sudo apt-get install apt-transport-https lsb-release ca-certificates curl software-properties-common gnupg2 pass jq -y
@@ -89,7 +101,7 @@ then
         echo "------------------------------------" >> $LOG
         echo "The $GIT_PATH exist & clone successful" >> $LOG
         cd $GIT_PATH/ProjectEdison
-        sudo docker-compose build
+        #sudo docker-compose build
 
 else
         echo "------------------------------------" >> $LOG
@@ -98,24 +110,27 @@ fi
 
 #Checking for Edison images
 
-        IMAGE=`docker images edison* --format "{{.Repository}}" | wc -l`
+        #IMAGE=`docker images edison* --format "{{.Repository}}" | wc -l`
 
-        if [ $IMAGE -eq 11 ]
-        then
-            echo "------------------------------------" >> $LOG
-            echo "All the 11 Edison Images are successfully built" >> $LOG
-            echo "$ACR_PASSWD" | docker login $ACR_SRVNAME -u $ACR_USERNAME --password-stdin >> $LOG
-           IMAGE_NAMES=`docker images edison* --format "{{.Repository}}"`
-                for i in $IMAGE_NAMES
-                    do
-                        echo "------------------------------------" >> $LOG
-                        echo "$i" >> $LOG
-                        docker tag $i $ACR_SRVNAME/$i:$TAG
-                        docker push $ACR_SRVNAME/$i:$TAG
-                        echo "The Image $i is successfully pushed"
-                    done
-        else
-            echo "Edison Images didn't built" >>  $LOG
-        fi
+        #if [ $IMAGE -eq 11 ]
+        #then
+        #    echo "------------------------------------" >> $LOG
+        #    echo "All the 11 Edison Images are successfully built" >> $LOG
+        #    echo "$ACR_PASSWD" | docker login $ACR_SRVNAME -u $ACR_USERNAME --password-stdin >> $LOG
+        #   IMAGE_NAMES=`docker images edison* --format "{{.Repository}}"`
+        #        for i in $IMAGE_NAMES
+        #            do
+        #                echo "------------------------------------" >> $LOG
+        #                echo "$i" >> $LOG
+        #                docker tag $i $ACR_SRVNAME/$i:$TAG
+        #                docker push $ACR_SRVNAME/$i:$TAG
+        #                echo "The Image $i is successfully pushed"
+        #            done
+        #else
+        #    echo "Edison Images didn't built" >>  $LOG
+        #fi
+#Updating the Common.secrets file
+#cat $GIT_PATH/ProjectEdison/Edison.Web/Kubernetes/qa/Config/Secrets/common.json | jq '.CosmosDb.AuthKey=env.CosmosDbSRT' | jq '.AzureServiceBus.ConnectionString=env.AzureServiceBusCONN' | jq '.ServiceBusRabbitMQ.Username=env.ServiceBusRabbitMQUSR' | jq '.ServiceBusRabbitMQ.Password=env.ServiceBusRabbitMQPWD' | jq '.ServiceBusAzure.ConnectionString=env.AzureServiceBusCONN'  | jq '.RestService.AzureAd.ClientSecret=env.AzureAdSRT' | jq '.SignalR.ConnectionString=env.SignalCONN' | jq '.IoTHubController.IoTHubConnectionString=env.IoTHubControllerSRT' | jq '.NotificationHub.ConnectionString=env.NotificationHubSRT' > $GIT_PATH/ProjectEdison/Edison.Web/Kubernetes/qa/Config/Secrets/common.secrets
+echo "------------------------------------" >> $LOG
 #Updating the Common.secrets file
 cat $GIT_PATH/ProjectEdison/Edison.Web/Kubernetes/qa/Config/Secrets/common.json | jq '.CosmosDb.AuthKey=env.CosmosDbSRT' | jq '.AzureServiceBus.ConnectionString=env.AzureServiceBusCONN' | jq '.ServiceBusRabbitMQ.Username=env.ServiceBusRabbitMQUSR' | jq '.ServiceBusRabbitMQ.Password=env.ServiceBusRabbitMQPWD' | jq '.ServiceBusAzure.ConnectionString=env.AzureServiceBusCONN'  | jq '.RestService.AzureAd.ClientSecret=env.AzureAdSRT' | jq '.SignalR.ConnectionString=env.SignalCONN' | jq '.IoTHubController.IoTHubConnectionString=env.IoTHubControllerSRT' | jq '.NotificationHub.ConnectionString=env.NotificationHubSRT' > $GIT_PATH/ProjectEdison/Edison.Web/Kubernetes/qa/Config/Secrets/common.secrets
