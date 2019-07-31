@@ -10,15 +10,15 @@
 
 [Login](#login) 
 
-[Scenario& Objectives](#scenario& objectives) 
+[Scenario and Objectives](#scenario-and-objectives) 
 
 [Exercise 0: Prepare the lab environment](#exercise-0-prepare-the-lab-environment)
 
-[Exercise 1: Implement and use Azure Blob Storage](#exercise-1:implement-and-use-azure-blob-storage)
+[Exercise 1: Implement and use Azure Blob Storage](#exercise-1-implement-and-use-azure-blob-storage)
 
-[Exercise 2: Implement and use Azure File Storage](#exercise-2:prepare-the-lab-environment)
+[Exercise 2: Implement and use Azure File Storage](#exercise-2-prepare-the-lab-environment)
 
-[Exercise 3: Remove lab resources](#exercise-3:remove-lab-resources)
+[Exercise 3: Remove lab resources](#exercise-3-remove-lab-resources)
 
 
 ## Overview
@@ -43,15 +43,18 @@ Note: When not using Cloud Shell, the lab virtual machine must have the Azure Po
 Lab files:
 * https://github.com/sysgain/qloudable-tl-labs/blob/MicrosoftLearnings/AZ-103-MicrosoftAzureAdministrator/Allfiles/Labfiles/Module_03/Implement_and_Manage_Storage/az-100-02_azuredeploy.json
 
-* https://github.com/sysgain/qloudable-tl-labs/blob/MicrosoftLearnings/AZ-103-MicrosoftAzureAdministrator/Allfiles/Labfiles/Module_03/Implement_and_
-Manage_Storage/az-100-02_azuredeploy.json
+* https://github.com/sysgain/qloudable-tl-labs/blob/MicrosoftLearnings/AZ-103-MicrosoftAzureAdministrator/Allfiles/Labfiles/Module_03/Implement_and_Manage_Storage/az-100-02_azuredeploy.json
 
 ## Login 
 
 Note down the azure portal login credentials which are provided from lab.
+
 Username
+
 Password
+
 Resource group
+
 Location
 
 ## Scenario& Objectives
