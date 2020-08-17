@@ -1,7 +1,7 @@
 #!/bin/bash
-hostname=testvmk
+hostname="$1"
 #Configure the hosts file
-sudo sed -i -e "s/127.0.0.1 localhost/127.0.0.1 $hostname.bornonthecloud.in $hostname/g" /etc/hosts
+sudo sed -i -e "s/127.0.0.1 localhost/127.0.0.1 $1.bornonthecloud.in $1/g" /etc/hosts
 
 #Install required packages
 sudo apt-get update
