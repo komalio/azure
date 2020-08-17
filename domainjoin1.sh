@@ -3,7 +3,7 @@ hostname="$1"
 domainToJoin="$2"
 adusername="$3"
 adpassword="$4"
-domainUppercase=upper($domainToJoin)
+domainUppercase="$5"
 #Configure the hosts file
 sudo sed -i -e "s/127.0.0.1 localhost/127.0.0.1 $1.$2 $1/g" /etc/hosts
 
@@ -20,9 +20,9 @@ sudo ntpdate $2
 sudo systemctl start ntp
 
 # Join VM to the managed domain
-sudo realm discover $domainUppercase
-echo $2 | kinit $3
-sudo echo $2 | realm join --verbose $domainUppercase -U $3 --install=/
+sudo realm discover $5
+echo $4 | kinit $3
+sudo echo $4 | realm join --verbose $5 -U $3 --install=/
 
 #Update the SSSD configuration
 sudo sed -i -e "s/use_fully_qualified_names = True/# use_fully_qualified_names = True/g" /etc/sssd/sssd.conf
