@@ -1,11 +1,12 @@
 #!/bin/bash
-hostname="$1"
-domainToJoin="$2"
-adusername="$3"
-adpassword="$4"
-domainUppercase="$5"
+hostname=$1
+domainToJoin=$2
+adusername=$3
+adpassword=$4
+domainUppercase=$5
+hostname1=$hostname.$domainToJoin
 #Configure the hosts file
-sudo sed -i -e "s/127.0.0.1 localhost/127.0.0.1 $1.$2 $1/g" /etc/hosts
+sudo sed -i -e "s/127.0.0.1 localhost/127.0.0.1 $hostname1 $1/g" /etc/hosts
 
 #Install required packages
 sudo apt-get update
