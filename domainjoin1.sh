@@ -1,14 +1,13 @@
 #!/bin/bash
 hostname=$1
-domainToJoin=$2
-adusername=$3
-adpassword=$4
-domainUppercase=$5
-
 #Configure the hosts file
 sudo sed -i -e "s/127.0.0.1 localhost/127.0.0.1 $1.bornonthecloud.in $1/g" /etc/hosts
 
 #Install required packages
+domainToJoin=$2
+adusername=$3
+adpassword=$4
+domainUppercase=$5
 sudo apt-get update
 export DEBIAN_FRONTEND=noninteractive
 sudo apt-get -y install krb5-user samba sssd sssd-tools libnss-sss libpam-sss ntp ntpdate realmd adcli 
