@@ -5,7 +5,7 @@ adusername=$3
 adpassword=$4
 domainUppercase=$5
 #Configure the hosts file
-sudo sed -i -e "s/127.0.0.1 localhost/127.0.0.1 $hostname.bornonthecloud.in $hostname/g" /etc/hosts
+sudo sed -i -e "s/127.0.0.1 localhost/127.0.0.1 $hostname.$domainToJoin $hostname/g" /etc/hosts
 #Install required packages
 sudo apt-get update
 export DEBIAN_FRONTEND=noninteractive
