@@ -6,7 +6,7 @@ adpassword=$4
 domainUppercase=$5
 ouPath=$6
 #Configure the hosts file
-sudo sed -i -e "s/127.0.0.1 localhost/127.0.0.1 $hostname.$domainToJoin $hostname/g" /etc/hosts
+sudo sed -i -e "s/127.0.0.1 localhost/127.0.0.1 $hostname.$domainToJoin $hostname/g" /etc/hosts 
 #Install required packages
 sudo apt-get update
 export DEBIAN_FRONTEND=noninteractive
@@ -20,7 +20,7 @@ sudo systemctl start ntp
 # Join VM to the managed domain
 sudo realm discover $domainUppercase
 echo $adpassword | kinit $adusername
-sudo echo $adpassword | realm join --verbose $domainUppercase -U $adusername --install=/ 
+sudo echo $adpassword | realm join --verbose $domainUppercase -U $adusername --computer-ou $ouPath --install=/ 
 #Update the SSSD configuration
 sudo sed -i -e "s/use_fully_qualified_names = True/# use_fully_qualified_names = True/g" /etc/sssd/sssd.conf
 sudo systemctl restart sssd
@@ -34,5 +34,5 @@ sudo echo "%AAD\ DC\ Administrators ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 #signin check
 #ssh -l komali@BORNONTHECLOUD.IN adtestvm.bornonthecloud.in
 
-#realm join --computer-ou="OU=advmsOU" --user=komali bornonthecloud.in
-#sudo echo 'Qwerty#12345' | realm join --verbose BORNONTHECLOUD.IN -U 'komali@BORNONTHECLOUD.IN' --computer-ou="OU=advmsOU;DC=bornonthecloud;DC=in" --install=/
+
+#sudo echo 'Qwerty#12345' | realm join --verbose BORNONTHECLOUD.IN -U 'komali@BORNONTHECLOUD.IN' --computer-ou 'OU=advmsOU;DC=bornonthecloud;DC=in' --install=/
