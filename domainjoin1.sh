@@ -20,7 +20,7 @@ sudo systemctl start ntp
 # Join VM to the managed domain
 sudo realm discover $domainUppercase
 echo $adpassword | kinit $adusername
-sudo echo $adpassword | realm join --verbose $domainUppercase -U $adusername --computer-ou="OU=advmsOU;DC=bornonthecloud;DC=in" --install=/ 
+sudo echo $adpassword | realm join --verbose $domainUppercase -U $adusername --install=/ 
 #Update the SSSD configuration
 sudo sed -i -e "s/use_fully_qualified_names = True/# use_fully_qualified_names = True/g" /etc/sssd/sssd.conf
 sudo systemctl restart sssd
