@@ -1,11 +1,10 @@
 #!/bin/bash
-LOG="/tmp/ouupdate.log"
-hostname="adtestvm"
-domainToJoin="bornonthecloud.in"
-adusername="komali@bornonthecloud.in"
-adpassword="Qwerty#12345"
-domainUppercase="BORNONTHECLOUD.IN"
-ouPath="OU=advmsOU;DC=bornonthecloud;DC=in"
+hostname=$1
+domainToJoin=$2
+adusername=$3
+adpassword=$4
+domainUppercase=$5
+ouPath=$6
 
 echo "ouPath" >> $LOG
 #Configure the hosts file
@@ -24,7 +23,7 @@ sudo systemctl start ntp
 sudo realm discover $domainUppercase
 echo $adpassword | kinit $adusername
 sudo -i
-sudo echo $adpassword | realm join --verbose $domainUppercase -U $adusername --computer-ou="OU=advmsOU;DC=bornonthecloud;DC=in" --install=/ 
+sudo echo $adpassword | realm join --verbose $domainUppercase -U $adusername --computer-ou="OU=advmsOU;DC=bornonthecloud;DC=in" --install=/ >> $LOG
 #Update the SSSD configuration
 sudo sed -i -e "s/use_fully_qualified_names = True/# use_fully_qualified_names = True/g" /etc/sssd/sssd.conf
 sudo systemctl restart sssd
