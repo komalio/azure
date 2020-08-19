@@ -5,7 +5,7 @@ adusername=$3
 adpassword=$4
 domainUppercase=$5
 LOG="/tmp/install.log"
-echo "$adpassword"
+echo "$adpassword" >> $LOG
 #Configure the hosts file
 sudo sed -i -e "s/127.0.0.1 localhost/127.0.0.1 $hostname.$domainToJoin $hostname/g" /etc/hosts 
 #Install required packages
