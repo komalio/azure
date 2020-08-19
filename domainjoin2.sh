@@ -9,7 +9,8 @@ sudo sed -i -e "s/127.0.0.1 localhost/127.0.0.1 $hostname.$domainToJoin $hostnam
 #Install required packages
 sudo apt-get update
 export DEBIAN_FRONTEND=noninteractive
-sudo apt-get -y install krb5-user samba sssd sssd-tools libnss-sss libpam-sss ntp ntpdate realmd adcli 
+sudo apt-get -y install krb5-user samba sssd sssd-tools libnss-sss libpam-sss ntp ntpdate realmd adcli
+sleep 40
 #Configure NTP
 sudo -i
 sudo echo "server $domainToJoin" >> /etc/ntp.conf
