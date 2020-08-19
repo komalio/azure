@@ -4,7 +4,6 @@ domainToJoin=$2
 adusername=$3
 adpassword=$4
 domainUppercase=$5
-ouPath=$6
 #Configure the hosts file
 sudo sed -i -e "s/127.0.0.1 localhost/127.0.0.1 $hostname.$domainToJoin $hostname/g" /etc/hosts 
 #Install required packages
