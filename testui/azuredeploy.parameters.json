@@ -1,0 +1,36 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "clusterName": {
+            "value": "arccluster"
+        },
+        "dnsPrefix": {
+            "value": "test"
+        },        
+         "linuxAdminUsername": {
+            "value": "adminuser"
+        },
+        "sshRSAPublicKey": {
+            "value": "---- BEGIN SSH2 PUBLIC KEY ----
+            Comment: "rsa-key-20201019"
+            AAAAB3NzaC1yc2EAAAABJQAAAQEAs4c/epxBDj6vorSMWVURWzwi+fzk6aNlp3k1
+            BQ5rVA8cQy+FxjgkPPeM2RPTu2Ud3wTUCgWHkqvANrkihc6+FbyVUI5sZzWrqTHD
+            96rp2PNByODBrt0cvRw5vjW7+0B9Y+DR8Nc1qnFVYpcdTAgOFvRYwLSDIYsIVcbT
+            chSsDCtZTfGxnUNNlJDr17fM2RSmdd2rtoPjTn2n+LHZKnYlTd76pOlNHng7JRNE
+            IKTw8bryRc7FFXA30k2Rfhm9vzJxt5s2J8b/SKsJcZLfn66CTQtrNx3DUjnIyjSD
+            sHr7K0HtqyvyLWnOWY9B8lxLHr3pKRud6rx8tUcOthlN1FEEHw==
+            ---- END SSH2 PUBLIC KEY ----
+            "
+        },
+        "servicePrincipalClientId": {
+            "value": "02a856a9-a91a-41b4-91ac-6d8c00d75b85"
+        },
+        "servicePrincipalClientSecret": {
+            "value": "U~RPq_D81XbJnI2OsybhqUPPlnUMKhLwZ6"
+        },
+        "kubernetesVersion": {
+            "value": "1.18.2"
+        }
+    }
+}
