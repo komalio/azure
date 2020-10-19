@@ -22,7 +22,7 @@
             "value": "U~RPq_D81XbJnI2OsybhqUPPlnUMKhLwZ6"
         },
         "kubernetesVersion": {
-            "value": "1.17.8"
+            "value": "1.17.9"
         }
     }
 }
